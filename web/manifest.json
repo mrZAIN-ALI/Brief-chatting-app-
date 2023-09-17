@@ -1,6 +1,6 @@
 {
-    "name": "brief",
-    "short_name": "brief",
+    "name": "chit_chat",
+    "short_name": "chit_chat",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
