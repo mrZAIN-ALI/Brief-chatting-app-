@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
     return SafeArea(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'Chit Chat',
         theme: ThemeData(
           fontFamily: "TimesNewRoman",
 
@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
                 fontWeight: FontWeight.normal),
           ),
         ),
-        home: Placeholder(),
+        home: Scaffold
       ),
     );
   }
