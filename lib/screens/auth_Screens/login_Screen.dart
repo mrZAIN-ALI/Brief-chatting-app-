@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:chit_chat/api/api.dart';
+import 'package:chit_chat/helpers/dialogs.dart';
 import 'package:chit_chat/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,35 +17,46 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   //
 
-  Future<UserCredential> _signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  Future<UserCredential?> _signInWithGoogle() async {
+    try {
+      await InternetAddress.lookup("google.com");
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
 
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
 
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+      // Once signed in, return the UserCredential
+      return await Apis.auth.signInWithCredential(credential);
+    } catch (err) {
+      print("_signInWithGoogle : $err");
+      DialogHelper.showSnackBar(context, "Something went wrong check internet");
+      return null;
+    }
   }
 
   void _trySignIn() {
+    DialogHelper.showProgressIndicator(context);
     _signInWithGoogle().then(
       (userCredentials) {
-        // print(userCredentials.additionalUserInfo);
-        // print(userCredentials.user);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => homeScreen(),
-          ),
-        );
+        Navigator.of(context).pop();
+        if (userCredentials != null) {
+          // print(userCredentials.additionalUserInfo);
+          // print(userCredentials.user);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => homeScreen(),
+            ),
+          );
+        }
       },
     );
   }

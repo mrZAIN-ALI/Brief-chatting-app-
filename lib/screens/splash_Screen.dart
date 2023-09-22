@@ -1,5 +1,7 @@
+import 'package:chit_chat/api/api.dart';
 import 'package:chit_chat/screens/auth_Screens/login_Screen.dart';
 import 'package:chit_chat/screens/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_launcher_icons/xml_templates.dart';
@@ -21,13 +23,28 @@ class _SplashScreenState extends State<SplashScreen> {
       Duration(milliseconds: 1500),
       () {
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent,),);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LoginScreen(),
+        SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
           ),
         );
+        if (FirebaseAuth.instance.currentUser != null) {
+          print(
+              "intitstate of splash screen user is : ${Apis.auth.currentUser}");
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => homeScreen(),
+            ),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginScreen(),
+            ),
+          );
+        }
       },
     );
     super.initState();
