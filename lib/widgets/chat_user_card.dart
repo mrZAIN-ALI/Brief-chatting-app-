@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class chatUserCard extends StatefulWidget {
-  const chatUserCard({super.key});
+  final _chatUser_info ;
+  const chatUserCard(this._chatUser_info);
 
   @override
   State<chatUserCard> createState() => _chatUserCardState();
@@ -22,7 +23,7 @@ class _chatUserCardState extends State<chatUserCard> {
           
           // textColor: Colors.amber,
           leading: CircleAvatar(child: Placeholder()),
-          title: Text("Friend Name"),
+          title: Text(widget._chatUser_info.name),
           subtitle: Text("status of msg + msg",maxLines: 1,),
           trailing: Text("10:22 PM"),
         ),

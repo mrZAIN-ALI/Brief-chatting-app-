@@ -45,17 +45,30 @@ class _LoginScreenState extends State<LoginScreen> {
   void _trySignIn() {
     DialogHelper.showProgressIndicator(context);
     _signInWithGoogle().then(
-      (userCredentials) {
+      (userCredentials) async {
         Navigator.of(context).pop();
         if (userCredentials != null) {
           // print(userCredentials.additionalUserInfo);
           // print(userCredentials.user);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => homeScreen(),
-            ),
-          );
+          if ((await Apis.userExists())) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => homeScreen(),
+              ),
+            );
+          } else {
+            Apis.createUser().then(
+              (value) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => homeScreen(),
+                  ),
+                );
+              },
+            );
+          }
         }
       },
     );
