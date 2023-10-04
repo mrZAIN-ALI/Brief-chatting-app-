@@ -42,15 +42,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     "http://via.placeholder.com/350x150",
                 progressIndicatorBuilder: (context, url, downloadProgress) =>
                     CircularProgressIndicator(value: downloadProgress.progress),
-                errorWidget: (context, url, error) => Icon(CupertinoIcons.person),
+                errorWidget: (context, url, error) =>
+                    Icon(CupertinoIcons.person),
               ),
             ),
-      
+
             //
             SizedBox(
               height: mediaQ.height * 0.020,
             ),
-            Text(widget.user_Info.email, style: TextStyle(color: Colors.black54)),
+            Text(widget.user_Info.email,
+                style: TextStyle(color: Colors.black54)),
             //
             SizedBox(
               height: mediaQ.height * 0.020,
@@ -58,18 +60,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
-                
                 initialValue: widget.user_Info.name,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(15),borderSide: 
-                  BorderSide(color: Color.fromARGB(255, 99, 43, 43))),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide:
+                        BorderSide(color: Colors.amber),
+                  ),
                   hintText: "i.e : John Smith",
-                  prefixIcon: Icon(CupertinoIcons.person , color: Theme.of(context).colorScheme.primary,),
-                  label: const Text("Name",style: TextStyle(fontSize: 25),),
+                  prefixIcon: Icon(
+                    CupertinoIcons.person,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  label: const Text(
+                    "Name",
+                    style: TextStyle(fontSize: 25),
+                  ),
                   fillColor: Theme.of(context).colorScheme.error,
-                  
                 ),
-                
               ),
             ),
           ],
