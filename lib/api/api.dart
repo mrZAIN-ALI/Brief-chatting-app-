@@ -8,6 +8,7 @@ class Apis {
   //
   static final _current_User = auth.currentUser;
   //
+  static  late chatUUser_Info me_LoggedIn;
   //
   static Future<bool> userExists() async {
     return (await fireStrore.collection("users").doc(_current_User!.uid).get())
@@ -31,5 +32,29 @@ class Apis {
     return await fireStrore.collection("users").doc(_current_User!.uid).set(
           chatUser.getJsonFormat(),
         );
+  }
+  //
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAlusers(){
+    return Apis.fireStrore.collection("users").snapshots();
+  }
+  //
+  static Future<void> getLoggedInUserInfo() async {
+    await fireStrore.collection("users").doc(_current_User!.uid).get().then((user) async{
+      if(user.exists){
+      me_LoggedIn = chatUUser_Info.mapJsonToModelObject(user.data()!);
+
+      }else {
+        await createUser().then((value) => getLoggedInUserInfo());
+      }
+
+    });
+    // print("Data from firestore : ${data.data()}");
+  }
+  //
+  static Future<void> updateUserInfo() async{
+    await fireStrore.collection("users").doc(_current_User!.uid).update({
+      "name": me_LoggedIn.name,
+      "about": me_LoggedIn.about,
+    });
   }
 }

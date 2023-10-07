@@ -13,9 +13,14 @@ class homeScreen extends StatefulWidget {
 
   @override
   State<homeScreen> createState() => _homeScreenState();
+  
 }
 
 class _homeScreenState extends State<homeScreen> {
+  void initState(){
+    super.initState();
+    Apis.getLoggedInUserInfo(); 
+  }
   List<chatUUser_Info> _list_UserInfo = [];
   @override
   Widget build(BuildContext context) {
@@ -32,7 +37,7 @@ class _homeScreenState extends State<homeScreen> {
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ProfileScreen(_list_UserInfo[0]),
+                builder: (context) => ProfileScreen(Apis.me_LoggedIn),
               ),
             ),
             icon: Icon(Icons.more_vert),
@@ -41,7 +46,7 @@ class _homeScreenState extends State<homeScreen> {
       ),
       //
       body: StreamBuilder(
-        stream: Apis.fireStrore.collection("users").snapshots(),
+        stream: Apis.getAlusers(),
         builder: (context, snapshot) {
           final dataFromSnap = snapshot.data?.docs;
           switch (snapshot.connectionState) {

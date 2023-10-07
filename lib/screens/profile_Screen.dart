@@ -1,8 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chit_chat/api/api.dart';
+import 'package:chit_chat/helpers/dialogs.dart';
 import 'package:chit_chat/models/user.dart';
+import 'package:chit_chat/screens/auth_Screens/login_Screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class ProfileScreen extends StatefulWidget {
   final chatUUser_Info user_Info;
@@ -22,12 +26,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
+  //
+  Widget makeSomeVerticalSpace(double he) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * he,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     //
     final mediaQ = MediaQuery.of(context).size;
     final heightForCircularImage = mediaQ.height * 0.20;
     final primaryThemeColor = Theme.of(context).colorScheme.primary;
+    final _textFormKey = GlobalKey<FormState>();
     //
     return Scaffold(
       appBar: AppBar(
@@ -35,153 +47,208 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text("User Profile"),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
             SizedBox(
               height: mediaQ.height * 0.020,
               width: mediaQ.width,
             ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(heightForCircularImage / 2),
-              child: CachedNetworkImage(
-                fit: BoxFit.cover,
-                height: heightForCircularImage,
-                width: heightForCircularImage,
-                imageUrl: widget.user_Info.image ??
-                    "http://via.placeholder.com/350x150",
-                progressIndicatorBuilder: (context, url, downloadProgress) =>
-                    CircularProgressIndicator(value: downloadProgress.progress),
-                errorWidget: (context, url, error) =>
-                    Icon(CupertinoIcons.person),
-              ),
-            ),
-            //
-            SizedBox(
-              height: mediaQ.height * 0.020,
-            ),
-            Text(widget.user_Info.email,
-                style: TextStyle(color: Colors.black54)),
-            //
-            SizedBox(
-              height: mediaQ.height * 0.040,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                focusNode: nameFocusNode,
-                initialValue: widget.user_Info.name,
-                // style: TextStyle(
-                //   color: nameFocusNode.hasFocus ? primaryThemeColor : Colors.black,
-                // ),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(
-                      color: nameFocusNode.hasFocus
-                          ? primaryThemeColor
-                          : Colors.black54,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(
-                      color: primaryThemeColor,
-                    ),
-                  ),
-                  hintText: "i.e : John Smith",
-                  prefixIcon: Icon(
-                    CupertinoIcons.person,
-                    color: nameFocusNode.hasFocus
-                        ? primaryThemeColor
-                        : Colors.black54,
-                    // color: primaryThemeColor,
-                  ),
-                  labelText: "Name",
-                  labelStyle: TextStyle(
-                    color: nameFocusNode.hasFocus
-                        ? primaryThemeColor
-                        : Colors.black54,
-                    fontSize: 25,
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius:
+                      BorderRadius.circular(heightForCircularImage / 2),
+                  child: CachedNetworkImage(
+                    fit: BoxFit.cover,
+                    height: heightForCircularImage,
+                    width: heightForCircularImage,
+                    imageUrl: widget.user_Info.image ??
+                        "http://via.placeholder.com/350x150",
+                    progressIndicatorBuilder:
+                        (context, url, downloadProgress) =>
+                            CircularProgressIndicator(
+                                value: downloadProgress.progress),
+                    errorWidget: (context, url, error) =>
+                        Icon(CupertinoIcons.person),
                   ),
                 ),
-                onTap: () {
-                  // When clicking on the first text field, unfocus the second one
-                  aboutFocusNode.unfocus();
-                },
-              ),
-            ),
-            //
-            SizedBox(
-              height: mediaQ.height * 0.020,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                focusNode: aboutFocusNode,
-                initialValue: widget.user_Info.about,
-                // style: TextStyle(
-                //   color: aboutFocusNode.hasFocus ? primaryThemeColor : Colors.black,
-                // ),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(
-                      color: aboutFocusNode.hasFocus
-                          ? primaryThemeColor
-                          : Colors.black54,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(
+                Positioned(
+                  child: MaterialButton(
+                    onPressed: () {},
+                    child: Icon(
+                      Icons.edit,
                       color: primaryThemeColor,
                     ),
+                    color: Colors.white,
+                    shape: CircleBorder(),
                   ),
-                  hintText: "i.e : John Smith",
-                  prefixIcon: Icon(
-                    CupertinoIcons.info,
-                    color: aboutFocusNode.hasFocus
-                        ? primaryThemeColor
-                        : Colors.black54,
-                  ),
-                  labelText: "About",
-                  labelStyle: TextStyle(
-                    color: aboutFocusNode.hasFocus
-                        ? primaryThemeColor
-                        : Colors.black54,
-                    fontSize: 25,
-                  ),
+                  bottom: 0,
+                  right: 0,
+                  // left: 4,
                 ),
-                onTap: () {
-                  // When clicking on the second text field, unfocus the first one
-                  nameFocusNode.unfocus();
-                },
-              ),
+              ],
+            ),
+            makeSomeVerticalSpace(0.02),
+
+            //
+            Text(
+              widget.user_Info.email,
+              style: TextStyle(color: Colors.black54),
             ),
             //
-            SizedBox(
-              height: mediaQ.height * 0.050,
+            makeSomeVerticalSpace(0.04),
+
+            //
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Form(
+                child: Column(
+                  children: [
+                    TextFormField(
+                      // onTap: ()=>nameFocusNode.requestFocus(),
+                      focusNode: nameFocusNode,
+                      keyboardType: TextInputType.name,
+                      initialValue: widget.user_Info.name,
+                      onSaved: (newValue) => Apis.me_LoggedIn.name =
+                          newValue! ?? "Default Value by zain",
+                      validator: (value) => (value!.isEmpty && value != null)
+                          ? "Name can't be empty"
+                          : null,
+                      // style: TextStyle(
+                      //   color: nameFocusNode.hasFocus ? primaryThemeColor : Colors.black,
+                      // ),
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            color: nameFocusNode.hasFocus
+                                ? primaryThemeColor
+                                : Colors.black54,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            color: primaryThemeColor,
+                          ),
+                        ),
+                        hintText: "i.e : John Smith",
+                        prefixIcon: Icon(
+                          CupertinoIcons.person,
+                          color: nameFocusNode.hasFocus
+                              ? primaryThemeColor
+                              : Colors.black54,
+                          // color: primaryThemeColor,
+                        ),
+                        labelText: "Name",
+                        labelStyle: TextStyle(
+                          color: nameFocusNode.hasFocus
+                              ? primaryThemeColor
+                              : Colors.black54,
+                          fontSize: 25,
+                        ),
+                      ),
+                    ),
+                    //
+                    makeSomeVerticalSpace(0.03),
+
+                    TextFormField(
+                      focusNode: aboutFocusNode,
+                      keyboardType: TextInputType.name,
+                      initialValue: widget.user_Info.name,
+                      onSaved: (newValue) => Apis.me_LoggedIn.name =
+                          newValue! ?? "Default Value by zain",
+                      validator: (value) => (value!.isEmpty && value != null)
+                          ? "Name can't be empty"
+                          : null,
+                      // style: TextStyle(
+                      //   color: nameFocusNode.hasFocus ? primaryThemeColor : Colors.black,
+                      // ),
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            color: aboutFocusNode.hasFocus
+                                ? primaryThemeColor
+                                : Colors.black54,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            color: primaryThemeColor,
+                          ),
+                        ),
+                        hintText: "i.e : John Smith",
+                        prefixIcon: Icon(
+                          CupertinoIcons.person,
+                          color: aboutFocusNode.hasFocus
+                              ? primaryThemeColor
+                              : Colors.black54,
+                          // color: primaryThemeColor,
+                        ),
+                        labelText: "Name",
+                        labelStyle: TextStyle(
+                          color: aboutFocusNode.hasFocus
+                              ? primaryThemeColor
+                              : Colors.black54,
+                          fontSize: 25,
+                        ),
+                      ),
+                    ),
+                    //
+                    makeSomeVerticalSpace(0.04),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        if (_textFormKey.currentState!.validate()) {
+                          _textFormKey.currentState!.save();
+                          Apis.updateUserInfo().then((value) {
+                            Navigator.of(context).pop();
+                          });
+                        }
+                      },
+                      icon: Icon(Icons.edit),
+                      label: Text("Update Profile"),
+                      style: ElevatedButton.styleFrom(
+                          minimumSize:
+                              Size(mediaQ.width * 0.7, mediaQ.height * .06),
+                          // shape: RoundedRectangleBorder(
+                          //   borderRadius: BorderRadius.circular(15),
+                          // ),
+                          shape: StadiumBorder()),
+                    ),
+
+
+                  ],
+                ),
+              ),
             ),
-            ElevatedButton.icon(
-                onPressed: () {},
-                icon: Icon(Icons.edit),
-                label: Text("Update Profile"),
-                style: ElevatedButton.styleFrom(
-                    minimumSize: Size(mediaQ.width * 0.7, mediaQ.height * .06),
-                    // shape: RoundedRectangleBorder(
-                    //   borderRadius: BorderRadius.circular(15),
-                    // ),
-                    shape: StadiumBorder()))
           ],
         ),
       ),
+      //
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.logout),
-        backgroundColor: Colors.white,
-        foregroundColor: primaryThemeColor,
-      ),
+          onPressed: () async {
+            DialogHelper.showProgressIndicator(context);
+            await Apis.auth.signOut().then((value) async {
+              await GoogleSignIn().signOut().then((value) {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                //
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                  ),
+                );
+                //
+              });
+            });
+          },
+          child: Icon(Icons.logout),
+          backgroundColor: Colors.white,
+          foregroundColor: primaryThemeColor,
+        ),
     );
   }
 }
