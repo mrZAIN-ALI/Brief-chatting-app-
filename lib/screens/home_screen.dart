@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 //
 
 class homeScreen extends StatefulWidget {
-  const homeScreen({super.key});
+  // const homeScreen({super.key});
 
   @override
   State<homeScreen> createState() => _homeScreenState();
@@ -52,11 +52,11 @@ class _homeScreenState extends State<homeScreen> {
             // _searchList.clear();
           });
           print("returning is searching after toggle $_is_Searching");
-          return Future.value(false);
+          return Future.value(true);
         }else{
           print("returning is searching when false toggle $_is_Searching");
 
-          return Future.value(true);
+          return Future.value(false);
 
         }
       },
