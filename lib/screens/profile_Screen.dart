@@ -40,8 +40,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final primaryThemeColor = Theme.of(context).colorScheme.primary;
     final mediaQ = MediaQuery.of(context).size;
     final heightForCircularImage = mediaQ.height * 0.20;
-    final nameFieldColor = nameFocusNode.hasFocus ? primaryThemeColor : Colors.black54;
-    final aboutFieldColor = aboutFocusNode.hasFocus ? primaryThemeColor : Colors.black54;
+    final nameFieldColor =
+        nameFocusNode.hasFocus ? primaryThemeColor : Colors.black54;
+    final aboutFieldColor =
+        aboutFocusNode.hasFocus ? primaryThemeColor : Colors.black54;
     //
     return GestureDetector(
       onTap: () {
@@ -98,7 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               makeSomeVerticalSpace(0.02),
-    
+
               //
               Text(
                 widget.user_Info.email,
@@ -106,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               //
               makeSomeVerticalSpace(0.04),
-    
+
               //
               Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -129,8 +131,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         // ),
                         onEditingComplete: () {
                           setState(() {
-                                                      nameFocusNode.unfocus();
-                          aboutFocusNode.requestFocus();
+                            nameFocusNode.unfocus();
+                            aboutFocusNode.requestFocus();
                           });
                         },
                         onTap: () {
@@ -153,21 +155,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           hintText: "i.e : John Smith",
-                          prefixIcon: Icon(
-                            CupertinoIcons.person,
-                            color:nameFieldColor
-                            // color: primaryThemeColor,
-                          ),
+                          prefixIcon:
+                              Icon(CupertinoIcons.person, color: nameFieldColor
+                                  // color: primaryThemeColor,
+                                  ),
                           labelText: "Name",
-                          labelStyle: TextStyle(
-                            color: nameFieldColor
-                          ),
+                          labelStyle: TextStyle(color: nameFieldColor),
                         ),
-                   
                       ),
                       //
                       makeSomeVerticalSpace(0.03),
-    
+
                       TextFormField(
                         focusNode: aboutFocusNode,
                         keyboardType: TextInputType.name,
@@ -193,9 +191,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(
-                              color: aboutFieldColor
-                            ),
+                            borderSide: BorderSide(color: aboutFieldColor),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
@@ -204,18 +200,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           hintText: "i.e : Loves to Eat",
-                          prefixIcon: Icon(
-                            CupertinoIcons.info,
-                            color: aboutFieldColor
-                            // color: primaryThemeColor,
-                          ),
+                          prefixIcon:
+                              Icon(CupertinoIcons.info, color: aboutFieldColor
+                                  // color: primaryThemeColor,
+                                  ),
                           labelText: "About",
                           labelStyle: TextStyle(
                             color: aboutFieldColor,
                             fontSize: 25,
                           ),
                         ),
-
                       ),
                       //
                       makeSomeVerticalSpace(0.04),
@@ -224,6 +218,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           if (_textFormKey.currentState!.validate()) {
                             _textFormKey.currentState!.save();
                             Apis.updateUserInfo().then((value) {
+                              DialogHelper.showSnackBar_Normal(context, "Profile Updated Successfully");
                               Navigator.of(context).pop();
                             });
                           }
@@ -238,8 +233,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             // ),
                             shape: StadiumBorder()),
                       ),
-    
-    
                     ],
                   ),
                 ),
@@ -249,27 +242,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         //
         floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              DialogHelper.showProgressIndicator(context);
-              await Apis.auth.signOut().then((value) async {
-                await GoogleSignIn().signOut().then((value) {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                  //
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginScreen(),
-                    ),
-                  );
-                  //
-                });
+          onPressed: () async {
+            DialogHelper.showProgressIndicator(context);
+            await Apis.auth.signOut().then((value) async {
+              await GoogleSignIn().signOut().then((value) {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                //
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                  ),
+                );
+                //
               });
-            },
-            child: Icon(Icons.logout),
-            backgroundColor: Colors.white,
-            foregroundColor: primaryThemeColor,
-          ),
+            });
+          },
+          child: Icon(Icons.logout),
+          backgroundColor: Colors.white,
+          foregroundColor: primaryThemeColor,
+        ),
       ),
     );
   }

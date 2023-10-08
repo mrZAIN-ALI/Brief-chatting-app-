@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return await Apis.auth.signInWithCredential(credential);
     } catch (err) {
       print("_signInWithGoogle : $err");
-      DialogHelper.showSnackBar(context, "Something went wrong check internet");
+      DialogHelper.showSnackBar_error(context, "Something went wrong check internet");
       return null;
     }
   }

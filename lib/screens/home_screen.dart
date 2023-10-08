@@ -5,6 +5,7 @@ import 'package:chit_chat/models/user.dart';
 import 'package:chit_chat/screens/profile_Screen.dart';
 import 'package:chit_chat/widgets/chat_user_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //
 
@@ -17,21 +18,53 @@ class homeScreen extends StatefulWidget {
 }
 
 class _homeScreenState extends State<homeScreen> {
+  bool _is_Searching=false;
+  //for string all users
+  // final List<chatUUser_Info> _list=[];
+  //For stroing searched items
+  final List<chatUUser_Info> _searchList=[];
+
+  List<chatUUser_Info> _list_UserInfo = [];
+
+  void searchUserFromMainList(value){
+    _searchList.clear();
+    for(var i in _list_UserInfo){
+        if(i.name.toLowerCase().contains(value.toLowerCase())|| i.email.toLowerCase().contains(value.toLowerCase())){
+            setState(() {
+              
+            _searchList.add(i);
+            });
+
+        }
+    }
+  }
+  //
   void initState(){
     super.initState();
     Apis.getLoggedInUserInfo(); 
   }
-  List<chatUUser_Info> _list_UserInfo = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: Icon(Icons.home_outlined),
-        title: Text("Chit Chat"),
+        title: _is_Searching ? TextField(
+          decoration: InputDecoration(border: InputBorder.none,hintText:  "Name or Email",),
+          autofocus: true,
+          style: TextStyle(fontSize: 25),
+          onChanged:  (value) {
+            searchUserFromMainList(value);
+          },
+        ): Text("Chit Chat"),
         actions: [
           IconButton(
-            onPressed: null,
-            icon: Icon(Icons.search),
+            onPressed: () {
+              setState(() {
+                _is_Searching=!_is_Searching;
+                _searchList.clear();
+              });
+            },
+            icon: Icon(_is_Searching ? CupertinoIcons.clear_circled : Icons.search),
           ),
           IconButton(
             onPressed: () => Navigator.push(
@@ -64,14 +97,14 @@ class _homeScreenState extends State<homeScreen> {
           }
           if (snapshot.hasData) {
             final data = snapshot.data!.docs;
-            print("Date from firestore : ${jsonEncode(data[0].data())}");
+            // print("Date from firestore : ${jsonEncode(data[0].data())}");
           }
           if (_list_UserInfo.isNotEmpty) {
             return ListView.builder(
-              itemCount: _list_UserInfo.length,
+              itemCount: _is_Searching ? _searchList.length : _list_UserInfo.length,
               physics: BouncingScrollPhysics(),
               itemBuilder: (context, index) {
-                return chatUserCard(_list_UserInfo[index]);
+                return chatUserCard(_is_Searching ? _searchList[index] : _list_UserInfo[index]);
               },
             );
           } else {
