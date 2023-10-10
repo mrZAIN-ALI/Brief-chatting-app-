@@ -34,6 +34,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _showBottomSheet(){
+    final media_Q=MediaQuery.of(context).size;
+    showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15),
+          topRight: Radius.circular(15),
+        )
+      ),
+      showDragHandle: true,
+      context: context, builder: (context) {
+      
+        return ListView(
+          
+          shrinkWrap: true,
+          children: [
+            Padding(
+              padding:  EdgeInsets.symmetric(vertical: media_Q.height*0.02),
+              child: Text("Pick a Profile Picture",textAlign: TextAlign.center,style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+              
+              ),),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                
+                Container(
+                  margin:  EdgeInsets.symmetric(vertical: media_Q.height*0.02),
+                  child: ElevatedButton(onPressed: () {
+                    
+                  }, child: Image.asset("assets/images/add_image.png",),
+                  style: ElevatedButton.styleFrom(
+                    
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    backgroundColor: Colors.white,
+                    fixedSize: Size(media_Q.width*0.3, media_Q.height*0.10),
+                  ),
+                  ),
+                ),
+                ElevatedButton(onPressed: () {
+                  
+                }, child: Image.asset("assets/images/add_image.png",),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  fixedSize: Size(media_Q.width*0.3, media_Q.height*0.10),
+                ),
+                ),
+              ],
+            ),
+          ],
+        );
+    },);
+  }
+  //
+
   @override
   Widget build(BuildContext context) {
     //
@@ -85,7 +144,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   Positioned(
                     child: MaterialButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        _showBottomSheet();
+                      },
                       child: Icon(
                         Icons.edit,
                         color: primaryThemeColor,

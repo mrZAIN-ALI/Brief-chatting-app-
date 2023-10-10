@@ -44,19 +44,15 @@ class _homeScreenState extends State<homeScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async{
-        print("in willo pop sdaaaaaaaaaaaakjdddddddddddddddddddddddddddddddddddddddddddd");
+      onWillPop: () {
         if(_is_Searching){
           setState(() {
             _is_Searching=!_is_Searching;
             // _searchList.clear();
           });
-          print("returning is searching after toggle $_is_Searching");
-          return Future.value(true);
-        }else{
-          print("returning is searching when false toggle $_is_Searching");
-
           return Future.value(false);
+        }else{
+          return Future.value(true);
 
         }
       },

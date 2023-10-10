@@ -84,6 +84,8 @@ flutter:
   assets:
     - assets/images/google.png
     - assets/images/icon/icon.png
+    - assets/images/camera.png
+    - assets/images/add_image.png
 
   #   - images/a_dot_ham.jpeg
 
