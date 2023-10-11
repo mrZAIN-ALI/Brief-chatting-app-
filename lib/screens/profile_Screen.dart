@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chit_chat/api/api.dart';
 import 'package:chit_chat/helpers/dialogs.dart';
@@ -21,33 +23,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final FocusNode nameFocusNode = FocusNode();
   final FocusNode aboutFocusNode = FocusNode();
   final _textFormKey = GlobalKey<FormState>();
-  @override
-  void dispose() {
-    nameFocusNode.dispose();
-    aboutFocusNode.dispose();
-    super.dispose();
-  }
-
+  String _imagePath = "empty";
+  bool _isUploading = false;
   //
   Widget makeSomeVerticalSpace(double he) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * he,
     );
   }
-  
-  void takeImageFromGallery() async {
-    final ImagePicker picker = ImagePicker();
-// Pick an image.
-final XFile? picketImage_File = await picker.pickImage(source: ImageSource.gallery);
 
-    
-    if ( picketImage_File!= null) {
+  void _takeImageFromGallery() async {
+    final ImagePicker picker = ImagePicker();
+    // Pick an image.
+    final XFile? picketImage_File =
+        await picker.pickImage(source: ImageSource.gallery);
+
+    if (picketImage_File != null) {
       setState(() {
-        Apis.me_LoggedIn.image = picketImage_File.path;
+        _imagePath = picketImage_File.path;
+        _isUploading = true;
       });
+
+      await Apis.updateProfileImage(File(picketImage_File.path)).then(
+        (value) {
+           DialogHelper.showSnackBar_Normal(
+          context, "Profile Image Updated Successfully");
+        },
+      );
+
+               Navigator.of(context).pop();
+     
     }
   }
-  
+
+  void _takeImageFromCamera() async {
+    final ImagePicker picker = ImagePicker();
+// Pick an image.
+    final XFile? picketImage_File =
+        await picker.pickImage(source: ImageSource.camera);
+
+    if (picketImage_File == null) {
+      print("Image not recived from camera");
+    } else {
+      setState(() {
+        _imagePath = picketImage_File.path;
+      });
+      Apis.updateProfileImage(File(picketImage_File.path)).then(
+        (value) => DialogHelper.showSnackBar_Normal(
+            context, "Profile Image Updated Successfully"),
+      );
+      Navigator.of(context).pop();
+
+    }
+  }
+
   void _showBottomSheet() {
     final media_Q = MediaQuery.of(context).size;
     showModalBottomSheet(
@@ -81,7 +110,9 @@ final XFile? picketImage_File = await picker.pickImage(source: ImageSource.galle
                       vertical: media_Q.height * 0.03,
                       horizontal: media_Q.width * 0.02),
                   child: ElevatedButton(
-                    onPressed: () => takeImageFromGallery,
+                    onPressed: () {
+                      _takeImageFromGallery();
+                    },
                     child: Image.asset(
                       "assets/images/add_image.png",
                     ),
@@ -94,15 +125,14 @@ final XFile? picketImage_File = await picker.pickImage(source: ImageSource.galle
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => _takeImageFromCamera(),
                   child: Image.asset(
                     "assets/images/camera.png",
                   ),
                   style: ElevatedButton.styleFrom(
                     shape: CircleBorder(),
                     backgroundColor: Colors.white,
-                    fixedSize:
-                        Size(media_Q.width * 0.3, media_Q.height * 0.15),
+                    fixedSize: Size(media_Q.width * 0.3, media_Q.height * 0.15),
                   ),
                 ),
               ],
@@ -146,23 +176,34 @@ final XFile? picketImage_File = await picker.pickImage(source: ImageSource.galle
               ),
               Stack(
                 children: [
-                  ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(heightForCircularImage / 2),
-                    child: CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      height: heightForCircularImage,
-                      width: heightForCircularImage,
-                      imageUrl: widget.user_Info.image ??
-                          "http://via.placeholder.com/350x150",
-                      progressIndicatorBuilder:
-                          (context, url, downloadProgress) =>
-                              CircularProgressIndicator(
-                                  value: downloadProgress.progress),
-                      errorWidget: (context, url, error) =>
-                          Icon(CupertinoIcons.person),
-                    ),
-                  ),
+                  _imagePath != "empty"
+                      ? ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(heightForCircularImage / 2),
+                          child: Image.file(
+                            File(_imagePath),
+                            fit: BoxFit.cover,
+                            height: heightForCircularImage,
+                            width: heightForCircularImage,
+                          ),
+                        )
+                      : ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(heightForCircularImage / 2),
+                          child: CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            height: heightForCircularImage,
+                            width: heightForCircularImage,
+                            imageUrl: widget.user_Info.image ??
+                                "http://via.placeholder.com/350x150",
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) =>
+                                    CircularProgressIndicator(
+                                        value: downloadProgress.progress),
+                            errorWidget: (context, url, error) =>
+                                Icon(CupertinoIcons.person),
+                          ),
+                        ),
                   Positioned(
                     child: MaterialButton(
                       onPressed: () {
