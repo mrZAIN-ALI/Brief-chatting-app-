@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
   final chatUUser_Info user_Info;
@@ -33,63 +34,83 @@ class _ProfileScreenState extends State<ProfileScreen> {
       height: MediaQuery.of(context).size.height * he,
     );
   }
+  
+  void takeImageFromGallery() async {
+    final ImagePicker picker = ImagePicker();
+// Pick an image.
+final XFile? picketImage_File = await picker.pickImage(source: ImageSource.gallery);
 
-  void _showBottomSheet(){
-    final media_Q=MediaQuery.of(context).size;
+    
+    if ( picketImage_File!= null) {
+      setState(() {
+        Apis.me_LoggedIn.image = picketImage_File.path;
+      });
+    }
+  }
+  
+  void _showBottomSheet() {
+    final media_Q = MediaQuery.of(context).size;
     showModalBottomSheet(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(15),
-          topRight: Radius.circular(15),
-        )
-      ),
+          borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(15),
+        topRight: Radius.circular(15),
+      )),
       showDragHandle: true,
-      context: context, builder: (context) {
-      
+      context: context,
+      builder: (context) {
         return ListView(
-          
           shrinkWrap: true,
           children: [
             Padding(
-              padding:  EdgeInsets.symmetric(vertical: media_Q.height*0.02),
-              child: Text("Pick a Profile Picture",textAlign: TextAlign.center,style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-              
-              ),),
+              padding: EdgeInsets.symmetric(vertical: media_Q.height * 0.02),
+              child: Text(
+                "Pick a Profile Picture",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                
                 Container(
-                  margin:  EdgeInsets.symmetric(vertical: media_Q.height*0.02),
-                  child: ElevatedButton(onPressed: () {
-                    
-                  }, child: Image.asset("assets/images/add_image.png",),
-                  style: ElevatedButton.styleFrom(
-                    
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                  margin: EdgeInsets.symmetric(
+                      vertical: media_Q.height * 0.03,
+                      horizontal: media_Q.width * 0.02),
+                  child: ElevatedButton(
+                    onPressed: () => takeImageFromGallery,
+                    child: Image.asset(
+                      "assets/images/add_image.png",
                     ),
+                    style: ElevatedButton.styleFrom(
+                      shape: CircleBorder(),
+                      backgroundColor: Colors.white,
+                      fixedSize:
+                          Size(media_Q.width * 0.3, media_Q.height * 0.15),
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Image.asset(
+                    "assets/images/camera.png",
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(),
                     backgroundColor: Colors.white,
-                    fixedSize: Size(media_Q.width*0.3, media_Q.height*0.10),
+                    fixedSize:
+                        Size(media_Q.width * 0.3, media_Q.height * 0.15),
                   ),
-                  ),
-                ),
-                ElevatedButton(onPressed: () {
-                  
-                }, child: Image.asset("assets/images/add_image.png",),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  fixedSize: Size(media_Q.width*0.3, media_Q.height*0.10),
-                ),
                 ),
               ],
             ),
           ],
         );
-    },);
+      },
+    );
   }
   //
 
@@ -279,7 +300,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           if (_textFormKey.currentState!.validate()) {
                             _textFormKey.currentState!.save();
                             Apis.updateUserInfo().then((value) {
-                              DialogHelper.showSnackBar_Normal(context, "Profile Updated Successfully");
+                              DialogHelper.showSnackBar_Normal(
+                                  context, "Profile Updated Successfully");
                               Navigator.of(context).pop();
                             });
                           }

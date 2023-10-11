@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
         SystemChrome.setSystemUIOverlayStyle(
           SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
+            systemNavigationBarColor: Colors.white,
           ),
         );
         if (FirebaseAuth.instance.currentUser != null) {
