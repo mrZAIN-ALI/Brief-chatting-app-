@@ -69,8 +69,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _imagePath = picketImage_File.path;
       });
       Apis.updateProfileImage(File(picketImage_File.path)).then(
-        (value) => DialogHelper.showSnackBar_Normal(
-            context, "Profile Image Updated Successfully"),
+        (value) {
+
+         DialogHelper.showSnackBar_Normal(
+            context, "Profile Image Updated Successfully");}
       );
       Navigator.of(context).pop();
 

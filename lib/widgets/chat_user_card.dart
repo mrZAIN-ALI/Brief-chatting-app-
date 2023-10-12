@@ -1,4 +1,5 @@
 import 'package:chit_chat/models/user.dart';
+import 'package:chit_chat/screens/chat_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -20,7 +21,11 @@ class _chatUserCardState extends State<chatUserCard> {
       margin: EdgeInsets.symmetric(horizontal: mediaQ.width * 0.03, vertical: 3),
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => print("object"),
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return ChatScreen(widget._chatUser_info);
+          },));
+        },
         child: ListTile(
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(
