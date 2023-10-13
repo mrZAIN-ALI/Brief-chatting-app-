@@ -87,4 +87,9 @@ class Apis {
       "image": me_LoggedIn.image,
     });
   }
+
+  //
+    static Stream<QuerySnapshot<Map<String, dynamic>>> getMessages() {
+    return Apis.fireStrore.collection("messages").snapshots();
+  }
 }

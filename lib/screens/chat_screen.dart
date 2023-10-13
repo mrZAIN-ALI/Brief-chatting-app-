@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chit_chat/api/api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -141,7 +145,46 @@ class _ChatScreenState extends State<ChatScreen> {
   }
   //
   Widget renderChatBody(){
-    return 
+    final list=[];
+    return Expanded(
+      child: StreamBuilder(
+            stream: Apis.getMessages(),
+            builder: (context, snapshot) {
+              final dataFromSnap = snapshot.data?.docs;
+              switch (snapshot.connectionState) {
+                case ConnectionState.waiting:
+                case ConnectionState.none:
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                case ConnectionState.active:
+                case ConnectionState.done:
+                  print(jsonEncode(dataFromSnap![0].data()));
+                //   list = dataFromSnap!
+                //           .map((e) => chatUUser_Info.mapJsonToModelObject(e.data()))
+                //           .toList() ??
+                //       [];
+              }
+              if (snapshot.hasData) {
+                // final data = snapshot.data!.docs;
+                // print("Date from firestore : ${jsonEncode(data[0].data())}");
+              }
+              if (list.isNotEmpty) {
+                return ListView.builder(
+                  itemCount:  list.length,
+                  physics: BouncingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return Center(child: Text("data"),);
+                  },
+                );
+              } else {
+                return Center(
+                  child: Text("Network not available"),
+                );
+              }
+            },
+          ),
+    );
   }
   @override
   Widget build(BuildContext context) {
@@ -160,6 +203,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             body: Column(
               children: [
+                renderChatBody(),
                 renderUserInput(),
               ],
             )),
