@@ -18,7 +18,7 @@ class _ChatScreenState extends State<ChatScreen> {
         title: Text("Chit Chat"),
       ),
       body: Center(
-        child: Text("Chat Screen"),
+        child: Text("Chat "),
       ),
       );
   }
