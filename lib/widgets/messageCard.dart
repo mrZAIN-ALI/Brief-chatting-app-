@@ -21,11 +21,9 @@ class _MessageCardState extends State<MessageCard> {
           padding: EdgeInsets.only(left: mediaQ.width * 0.02),
           child: Column(
             children: [
-              Flexible(
-                child: Text(
-                  widget.message.sentTime + "AM",
-                  style: TextStyle(fontSize: 12, color: Colors.black54),
-                ),
+              Text(
+                widget.message.sentTime + "AM",
+                style: TextStyle(fontSize: 12, color: Colors.black54),
               ),
               Icon(
                 Icons.done_all,

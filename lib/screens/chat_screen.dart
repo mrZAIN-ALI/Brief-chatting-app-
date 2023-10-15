@@ -153,18 +153,18 @@ class _ChatScreenState extends State<ChatScreen> {
     List<Messages> list=[];
     return Expanded(
       child: StreamBuilder(
-            stream: Apis.getMessages(),
+            stream: Apis.getMessages(widget.secondPlayer),
             builder: (context, snapshot) {
               final dataFromSnap = snapshot.data?.docs;
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
                 case ConnectionState.none:
                   return const Center(
-                    child: CircularProgressIndicator(),
+                    child: Center(child: Text("Start Chating ")),
                   );
                 case ConnectionState.active:
                 case ConnectionState.done:
-                  print(jsonEncode(dataFromSnap![0].data()));
+                  // print(jsonEncode(dataFromSnap![0].data()));
                   list = dataFromSnap!
                           .map((e) => Messages.fromJson(e.data()))
                           .toList() ??
@@ -184,7 +184,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 );
               } else {
                 return Center(
-                  child: Text("Network not available"),
+                  child: Text("Start Chating"),
                 );
               }
             },

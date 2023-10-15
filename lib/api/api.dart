@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chit_chat/models/message.dart';
 import 'package:chit_chat/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -83,13 +84,39 @@ class Apis {
     //getting download url
     me_LoggedIn.image = await ref.getDownloadURL();
     //updating user info
-    final log =await fireStrore.collection("users").doc(_current_User!.uid).update({
+    final log =
+        await fireStrore.collection("users").doc(_current_User!.uid).update({
       "image": me_LoggedIn.image,
     });
   }
 
+
   //
-    static Stream<QuerySnapshot<Map<String, dynamic>>> getMessages() {
-    return Apis.fireStrore.collection("messages").snapshots();
+  static String getUniqueChatID(String id2) {
+    return _current_User!.uid.hashCode <= id2.hashCode
+        ? "${_current_User!.uid} + $id2"
+        : "$id2 + ${_current_User!.uid}";
   }
+  //
+  //
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMessages(chatUUser_Info user) {
+    return fireStrore.collection("chats/${getUniqueChatID(user.id)}/messages").snapshots();
+  }
+  //
+  static Future<void> sendMessage(chatUUser_Info reciverr , String msg) async{
+    final time=DateTime.now().millisecondsSinceEpoch.toString(); 
+
+    final messageObj= Messages(
+      fromId: me_LoggedIn.id,
+      msg: msg,
+      sentTime: time,
+      toId: reciverr.id,
+      typeOfMsg: msgType.text,
+      readTime: " "
+    );
+
+    final ref = fireStrore.collection("chats/${getUniqueChatID(reciverr.id)}/messages");
+    await ref.doc(time).set(messageObj.toJson()); 
+  }
+
 }
