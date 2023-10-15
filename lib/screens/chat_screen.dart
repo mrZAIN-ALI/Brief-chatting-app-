@@ -3,10 +3,13 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chit_chat/api/api.dart';
+import 'package:chit_chat/widgets/messageCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+//
+import '../models/message.dart';
 
 class ChatScreen extends StatefulWidget {
   final secondPlayer;
@@ -17,6 +20,8 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+
+  List<Messages> _listofMessages = [];
   Widget _customizeAppbar() {
     //
     final mediaQ = MediaQuery.of(context).size;
@@ -145,7 +150,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
   //
   Widget renderChatBody(){
-    final list=[];
+    List<Messages> list=[];
     return Expanded(
       child: StreamBuilder(
             stream: Apis.getMessages(),
@@ -160,10 +165,10 @@ class _ChatScreenState extends State<ChatScreen> {
                 case ConnectionState.active:
                 case ConnectionState.done:
                   print(jsonEncode(dataFromSnap![0].data()));
-                //   list = dataFromSnap!
-                //           .map((e) => chatUUser_Info.mapJsonToModelObject(e.data()))
-                //           .toList() ??
-                //       [];
+                  list = dataFromSnap!
+                          .map((e) => Messages.fromJson(e.data()))
+                          .toList() ??
+                      [];
               }
               if (snapshot.hasData) {
                 // final data = snapshot.data!.docs;
@@ -174,7 +179,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   itemCount:  list.length,
                   physics: BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
-                    return Center(child: Text("data"),);
+                    return MessageCard(list[index]);
                   },
                 );
               } else {
