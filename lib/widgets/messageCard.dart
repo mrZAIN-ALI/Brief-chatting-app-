@@ -1,4 +1,5 @@
 import 'package:chit_chat/api/api.dart';
+import 'package:chit_chat/helpers/dateFormtingUtil.dart';
 import 'package:chit_chat/models/message.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,17 +16,19 @@ class _MessageCardState extends State<MessageCard> {
   Widget _myMessage() {
     final mediaQ = MediaQuery.of(context).size;
     return Row(
-      // mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Padding(
           padding: EdgeInsets.only(left: mediaQ.width * 0.02),
           child: Column(
             children: [
               Text(
-                widget.message.sentTime + "AM",
+                DateFormatUtil.FormatDate(context: context, unfromatedDate: widget.message.sentTime),
+                // DateTime.parse(widget.message.sentTime.toString()).toString(),
                 style: TextStyle(fontSize: 12, color: Colors.black54),
               ),
-              Icon(
+              if(widget.message.readTime!=" ")
+               Icon(
                 Icons.done_all,
                 color: Colors.blue,
                 size: 20,)
@@ -55,8 +58,7 @@ class _MessageCardState extends State<MessageCard> {
             child: Padding(
               padding: const EdgeInsets.all(4.0),
               child: Text(
-                widget.message.msg +
-                    "this ist to much message assdasdjasssssssssssssssssssssssssssssssss",
+                widget.message.msg ,
                 style: TextStyle(fontSize: 18),
               ),
             ),
@@ -94,8 +96,7 @@ class _MessageCardState extends State<MessageCard> {
             child: Padding(
               padding: const EdgeInsets.all(4.0),
               child: Text(
-                widget.message.msg +
-                    "this ist to much message assdasdjasssssssssssssssssssssssssssssssss",
+                widget.message.msg ,
                 style: TextStyle(fontSize: 18),
               ),
             ),
@@ -115,7 +116,7 @@ class _MessageCardState extends State<MessageCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Apis.me_LoggedIn.id != widget.message.fromId
+    return Apis.me_LoggedIn.id == widget.message.fromId
         ? _myMessage()
         : _secondPlayer();
   }

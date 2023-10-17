@@ -31,7 +31,7 @@ class Apis {
       name: _current_User!.displayName.toString(),
       about: "bhag jao",
       createdAt: time,
-      id: "id",
+      id: _current_User!.uid ?? "id",
       pushToken: "unkniwn right now",
       email: _current_User!.email.toString(),
       isOnline: true,
@@ -90,33 +90,59 @@ class Apis {
     });
   }
 
-
   //
   static String getUniqueChatID(String id2) {
     return _current_User!.uid.hashCode <= id2.hashCode
         ? "${_current_User!.uid} + $id2"
         : "$id2 + ${_current_User!.uid}";
   }
-  //
-  //
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getMessages(chatUUser_Info user) {
-    return fireStrore.collection("chats/${getUniqueChatID(user.id)}/messages").snapshots();
-  }
-  //
-  static Future<void> sendMessage(chatUUser_Info reciverr , String msg) async{
-    final time=DateTime.now().millisecondsSinceEpoch.toString(); 
 
-    final messageObj= Messages(
-      fromId: me_LoggedIn.id,
-      msg: msg,
-      sentTime: time,
-      toId: reciverr.id,
-      typeOfMsg: msgType.text,
-      readTime: " "
-    );
+  //
+  //Fetchign MEssages
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMessages(
+      chatUUser_Info user) {
+    try {
+      final snap = fireStrore
+          .collection("chats/${getUniqueChatID(user.id)}/messages")
+          .snapshots();
+        print("Getting messages");
+      return snap;
 
-    final ref = fireStrore.collection("chats/${getUniqueChatID(reciverr.id)}/messages");
-    await ref.doc(time).set(messageObj.toJson()); 
+    } catch (e) {
+      print("Error while fetching messages : $e");
+    }
+    return {} as Stream<QuerySnapshot<Map<String, dynamic>>>; //returning empty
   }
 
+  //Sending message
+  static Future<void> sendMessage(chatUUser_Info reciverr, String msg) async {
+    final time = DateTime.now().millisecondsSinceEpoch.toString();
+
+    Messages messageObj = Messages(
+        fromId: me_LoggedIn.id,
+        msg: msg,
+        sentTime: time,
+        toId: reciverr.id,
+        typeOfMsg: msgType.text,
+        readTime: " ");
+
+    final ref = fireStrore
+        .collection("chats/${getUniqueChatID(reciverr.id)}/messages/");
+    final jsonFormtOfMsg = messageObj.toJson();
+
+    try {
+      await ref.doc(time).set(jsonFormtOfMsg);
+      print("Message Sent");
+    } catch (e) {
+      print("Error while sending message : $e");
+    }
+  }
+
+  //Udaitn message status 
+  Future<void> updateMessageStatus(Messages msg) async{
+    final ref = fireStrore.collection("chats/${getUniqueChatID(msg.fromId)}/messages/");
+    await ref.doc(msg.sentTime).update({
+      "readTime" :DateTime.now().millisecondsSinceEpoch.toString(),
+    });
+  }
 }

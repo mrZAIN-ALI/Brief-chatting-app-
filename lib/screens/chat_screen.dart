@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chit_chat/api/api.dart';
+import 'package:chit_chat/helpers/dialogs.dart';
 import 'package:chit_chat/widgets/messageCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -84,6 +85,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   //for innput of user
   Widget renderUserInput() {
+    final TextEditingController _mesgFieldController = TextEditingController();
+
     final mediaQ = MediaQuery.of(context).size;
     return Padding(
       padding:  EdgeInsets.symmetric(vertical: mediaQ.height*0.01,horizontal: mediaQ.width*0.02),
@@ -104,6 +107,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   Expanded(
                     child: TextField(
+                      controller: _mesgFieldController,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       decoration: InputDecoration(
@@ -134,7 +138,13 @@ class _ChatScreenState extends State<ChatScreen> {
             // padding: EdgeInsets.all(0),
             minWidth: 0,          
             onPressed: () {
-              print("object");
+              // print("object");
+              if(_mesgFieldController.text.isNotEmpty){
+                Apis.sendMessage(widget.secondPlayer, _mesgFieldController.text);
+                _mesgFieldController.text="";
+              }else{
+                return null;
+              }
             },
             child: Icon(
               Icons.send,
@@ -158,6 +168,7 @@ class _ChatScreenState extends State<ChatScreen> {
               final dataFromSnap = snapshot.data?.docs;
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
+                  return CircularProgressIndicator();
                 case ConnectionState.none:
                   return const Center(
                     child: Center(child: Text("Start Chating ")),
@@ -170,10 +181,10 @@ class _ChatScreenState extends State<ChatScreen> {
                           .toList() ??
                       [];
               }
-              if (snapshot.hasData) {
-                // final data = snapshot.data!.docs;
-                // print("Date from firestore : ${jsonEncode(data[0].data())}");
-              }
+              // if (snapshot.hasData) {
+              //   // final data = snapshot.data!.docs;
+              //   // print("Date from firestore : ${jsonEncode(data[0].data())}");
+              // }
               if (list.isNotEmpty) {
                 return ListView.builder(
                   itemCount:  list.length,

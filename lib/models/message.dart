@@ -29,7 +29,7 @@ class Messages {
     _data['msg'] = msg;
     _data['readTime'] = readTime;
     _data['sentTime'] = sentTime;
-    _data['typeOfMsg'] = typeOfMsg;
+    _data['typeOfMsg'] = typeOfMsg.toString();
     _data['fromId'] = fromId;
     return _data;
   }
