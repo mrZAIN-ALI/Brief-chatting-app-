@@ -139,7 +139,7 @@ class Apis {
   }
 
   //Udaitn message status 
-  Future<void> updateMessageStatus(Messages msg) async{
+  static Future<void> updateMessageStatus(Messages msg) async{
     final ref = fireStrore.collection("chats/${getUniqueChatID(msg.fromId)}/messages/");
     await ref.doc(msg.sentTime).update({
       "readTime" :DateTime.now().millisecondsSinceEpoch.toString(),

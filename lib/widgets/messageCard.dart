@@ -14,6 +14,9 @@ class MessageCard extends StatefulWidget {
 
 class _MessageCardState extends State<MessageCard> {
   Widget _myMessage() {
+    if(widget.message.fromId == widget.message.toId){
+      Apis.updateMessageStatus(widget.message);
+    }
     final mediaQ = MediaQuery.of(context).size;
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -71,6 +74,10 @@ class _MessageCardState extends State<MessageCard> {
 
   Widget _secondPlayer() {
     final mediaQ = MediaQuery.of(context).size;
+
+    if(widget.message.readTime!=" "){
+      Apis.updateMessageStatus( widget.message);
+    }
     return Row(
       // mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -104,12 +111,22 @@ class _MessageCardState extends State<MessageCard> {
         ),
         //
         Padding(
-          padding: EdgeInsets.only(right: mediaQ.width * 0.02),
-          child: Text(
-            widget.message.sentTime,
-            style: TextStyle(fontSize: 12, color: Colors.black54),
+          padding: EdgeInsets.only(left: mediaQ.width * 0.02),
+          child: Column(
+            children: [
+              Text(
+                DateFormatUtil.FormatDate(context: context, unfromatedDate: widget.message.sentTime),
+                // DateTime.parse(widget.message.sentTime.toString()).toString(),
+                style: TextStyle(fontSize: 12, color: Colors.black54),
+              ),
+              if(widget.message.readTime!=" ")
+               Icon(
+                Icons.done_all,
+                color: Colors.blue,
+                size: 20,)
+            ],
           ),
-        )
+        ),
       ],
     );
   }
