@@ -105,9 +105,8 @@ class Apis {
       final snap = fireStrore
           .collection("chats/${getUniqueChatID(user.id)}/messages")
           .snapshots();
-        print("Getting messages");
+      print("Getting messages");
       return snap;
-
     } catch (e) {
       print("Error while fetching messages : $e");
     }
@@ -138,11 +137,28 @@ class Apis {
     }
   }
 
-  //Udaitn message status 
-  static Future<void> updateMessageStatus(Messages msg) async{
-    final ref = fireStrore.collection("chats/${getUniqueChatID(msg.fromId)}/messages/");
+  //Udaitn message status
+  static Future<void> updateMessageStatus(Messages msg) async {
+    final ref =
+        fireStrore.collection("chats/${getUniqueChatID(msg.fromId)}/messages/");
     await ref.doc(msg.sentTime).update({
-      "readTime" :DateTime.now().millisecondsSinceEpoch.toString(),
+      "readTime": DateTime.now().millisecondsSinceEpoch.toString(),
     });
+  }
+
+  //get last sent or recieved message
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getLastmessage(
+      chatUUser_Info user) {
+    try {
+      final snap = fireStrore
+          .collection("chats/${getUniqueChatID(user.id)}/messages")
+          .limit(1)
+          .snapshots();
+      print("Getting messages");
+      return snap;
+    } catch (e) {
+      print("Error while fetching messages : $e");
+    }
+    return {} as Stream<QuerySnapshot<Map<String, dynamic>>>; //returning empty
   }
 }
