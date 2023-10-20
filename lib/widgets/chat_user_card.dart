@@ -35,7 +35,7 @@ class _chatUserCardState extends State<chatUserCard> {
           stream: Apis.getLastmessage(widget._chatUser_info),
           builder: (context, snapshot) {
             // snapshot.connectionState==ConnectionState.waiting?Center(child: CircularProgressIndicator(),):null;
-            final dataFromSnap=snapshot.data!.docs;
+            final dataFromSnap=snapshot.data !.docs;
             final list=dataFromSnap.map((e) => Messages.fromJson(e.data())).toList();
             if(list.isNotEmpty){
               _tempMessage=list[0];

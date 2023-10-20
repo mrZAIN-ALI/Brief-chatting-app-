@@ -151,10 +151,10 @@ class Apis {
       chatUUser_Info user) {
     try {
       final snap = fireStrore
-          .collection("chats/${getUniqueChatID(user.id)}/messages")
+          .collection("chats/${getUniqueChatID(user.id)}/messages/")
           .limit(1)
           .snapshots();
-      print("Getting messages");
+      print("Getting last message");
       return snap;
     } catch (e) {
       print("Error while fetching messages : $e");
