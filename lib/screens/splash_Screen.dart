@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
         );
         if (FirebaseAuth.instance.currentUser != null) {
           print(
-              "intitstate of splash screen user is : ${Apis.auth.currentUser}");
+              "intitstate of splash screen user is : ${Apis.current_User}");
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(

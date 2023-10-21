@@ -168,7 +168,7 @@ class _ChatScreenState extends State<ChatScreen> {
               final dataFromSnap = snapshot.data?.docs;
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
-                  return CircularProgressIndicator();
+                  return Center(child: CircularProgressIndicator());
                 case ConnectionState.none:
                   return const Center(
                     child: Center(child: Text("Start Chating ")),

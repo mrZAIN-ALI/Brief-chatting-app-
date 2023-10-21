@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' show File;
 
 import 'package:chit_chat/models/message.dart';
 import 'package:chit_chat/models/user.dart';
@@ -13,12 +13,12 @@ class Apis {
   //
   static final FirebaseStorage storage_FirebaseSrg = FirebaseStorage.instance;
   //
-  static final _current_User = auth.currentUser;
+  static final current_User =  auth.currentUser;
   //
   static late chatUUser_Info me_LoggedIn;
   //
   static Future<bool> userExists() async {
-    return (await fireStrore.collection("users").doc(_current_User!.uid).get())
+    return (await fireStrore.collection("users").doc(current_User!.uid).get())
         .exists;
   }
 
@@ -26,17 +26,18 @@ class Apis {
   static Future<void> createUser() async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
     final chatUser = chatUUser_Info(
-      image: _current_User!.photoURL.toString(),
+      image: current_User!.photoURL.toString(),
       lastActive: time,
-      name: _current_User!.displayName.toString(),
+      name: current_User!.displayName.toString(),
       about: "bhag jao",
       createdAt: time,
-      id: _current_User!.uid ?? "id",
+      id: current_User!.uid ?? "id",
       pushToken: "unkniwn right now",
-      email: _current_User!.email.toString(),
+      email: current_User!.email.toString(),
       isOnline: true,
     );
-    return await fireStrore.collection("users").doc(_current_User!.uid).set(
+    print("Creating user");
+    return await fireStrore.collection("users").doc(current_User!.uid).set(
           chatUser.getJsonFormat(),
         );
   }
@@ -48,9 +49,11 @@ class Apis {
 
   //
   static Future<void> getLoggedInUserInfo() async {
+    current_User?? await auth.currentUser;
+    print("Error ku a rha h ");
     await fireStrore
         .collection("users")
-        .doc(_current_User!.uid)
+        .doc(current_User!.uid)
         .get()
         .then((user) async {
       if (user.exists) {
@@ -64,7 +67,7 @@ class Apis {
 
   //
   static Future<void> updateUserInfo() async {
-    await fireStrore.collection("users").doc(_current_User!.uid).update({
+    await fireStrore.collection("users").doc(current_User!.uid).update({
       "name": me_LoggedIn.name,
       "about": me_LoggedIn.about,
     });
@@ -75,7 +78,7 @@ class Apis {
     final fileExtenstion = file.path.split(".").last;
     //refering storage locaiton on fitrebase
     final ref = storage_FirebaseSrg.ref().child(
-        "profileImages/${_current_User!.uid}/profileImage.$fileExtenstion");
+        "profileImages/${current_User!.uid}/profileImage.$fileExtenstion");
     //uploading file to firebase storage
     await ref.putFile(
       file,
@@ -85,16 +88,16 @@ class Apis {
     me_LoggedIn.image = await ref.getDownloadURL();
     //updating user info
     final log =
-        await fireStrore.collection("users").doc(_current_User!.uid).update({
+        await fireStrore.collection("users").doc(current_User!.uid).update({
       "image": me_LoggedIn.image,
     });
   }
 
   //
   static String getUniqueChatID(String id2) {
-    return _current_User!.uid.hashCode <= id2.hashCode
-        ? "${_current_User!.uid} + $id2"
-        : "$id2 + ${_current_User!.uid}";
+    return current_User!.uid.hashCode <= id2.hashCode
+        ? "${current_User!.uid} + $id2"
+        : "$id2 + ${current_User!.uid}";
   }
 
   //
@@ -153,6 +156,7 @@ class Apis {
       final snap = fireStrore
           .collection("chats/${getUniqueChatID(user.id)}/messages/")
           .limit(1)
+          .orderBy("sentTime",descending: true)
           .snapshots();
       print("Getting last message");
       return snap;

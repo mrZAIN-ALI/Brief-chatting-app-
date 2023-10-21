@@ -41,6 +41,7 @@ class _homeScreenState extends State<homeScreen> {
     super.initState();
     Apis.getLoggedInUserInfo(); 
   }
+  
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -112,6 +113,7 @@ class _homeScreenState extends State<homeScreen> {
             }
             if (_list_UserInfo.isNotEmpty) {
               return ListView.builder(
+                
                 itemCount: _is_Searching ? _searchList.length : _list_UserInfo.length,
                 physics: BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
