@@ -64,7 +64,6 @@ class Apis {
     });
     // print("Data from firestore : ${data.data()}");
   }
-
   //
   static Future<void> updateUserInfo() async {
     await fireStrore.collection("users").doc(current_User!.uid).update({
