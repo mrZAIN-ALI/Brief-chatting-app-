@@ -107,6 +107,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   IconButton(
                     onPressed: () => setState(() {
                       _isEmojiPickerOn = !_isEmojiPickerOn;
+                      FocusScope.of(context).unfocus();
                     }),
                     icon: Icon(Icons.emoji_emotions_outlined),
                   ),
@@ -114,11 +115,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: TextField(
                       controller: _mesgFieldController,
                       onTap: () {
-                          setState(() {
-                            if(_isEmojiPickerOn){
-                              _isEmojiPickerOn = false;
-                            }
-                          });
+                        setState(() {
+                          if (_isEmojiPickerOn) {
+                            _isEmojiPickerOn = false;
+                          }
+                        });
                       },
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
@@ -270,23 +271,36 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
       child: SafeArea(
-        child: GestureDetector(
-          onTap: () {
-            _isEmojiPickerOn = false;
-           FocusScope.of(context).unfocus();},
-          child: Scaffold(
-              appBar: AppBar(
-                // title: Text("Chit Chat"),
-                automaticallyImplyLeading: false,
-                flexibleSpace: _customizeAppbar(),
-              ),
-              body: Column(
-                children: [
-                  renderChatBody(),
-                  renderUserInput(),
-                  if (_isEmojiPickerOn) _showEmojiPicker(),
-                ],
-              )),
+        child: WillPopScope(
+          onWillPop: () {
+            if (_isEmojiPickerOn) {
+              setState(() {
+                _isEmojiPickerOn = !_isEmojiPickerOn;
+              });
+              return Future.value(false);
+            } else {
+              return Future.value(true);
+            }
+          },
+          child: GestureDetector(
+            onTap: () {
+              _isEmojiPickerOn = !_isEmojiPickerOn;
+              FocusScope.of(context).unfocus();
+            },
+            child: Scaffold(
+                appBar: AppBar(
+                  // title: Text("Chit Chat"),
+                  automaticallyImplyLeading: false,
+                  flexibleSpace: _customizeAppbar(),
+                ),
+                body: Column(
+                  children: [
+                    renderChatBody(),
+                    renderUserInput(),
+                    if (_isEmojiPickerOn) _showEmojiPicker(),
+                  ],
+                )),
+          ),
         ),
       ),
     );
