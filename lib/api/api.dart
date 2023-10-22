@@ -13,7 +13,7 @@ class Apis {
   //
   static final FirebaseStorage storage_FirebaseSrg = FirebaseStorage.instance;
   //
-  static final current_User =  auth.currentUser;
+  static final current_User = auth.currentUser;
   //
   static late chatUUser_Info me_LoggedIn;
   //
@@ -49,21 +49,23 @@ class Apis {
 
   //
   static Future<void> getLoggedInUserInfo() async {
-    current_User?? await auth.currentUser;
-    print("Error ku a rha h ");
+    // current_User ?? await auth.currentUser;
     await fireStrore
         .collection("users")
         .doc(current_User!.uid)
         .get()
         .then((user) async {
       if (user.exists) {
+        print("Error ku a rha h ");
         me_LoggedIn = chatUUser_Info.mapJsonToModelObject(user.data()!);
       } else {
         await createUser().then((value) => getLoggedInUserInfo());
+        print("creating user user not exist ");
       }
     });
     // print("Data from firestore : ${data.data()}");
   }
+
   //
   static Future<void> updateUserInfo() async {
     await fireStrore.collection("users").doc(current_User!.uid).update({
@@ -155,7 +157,7 @@ class Apis {
       final snap = fireStrore
           .collection("chats/${getUniqueChatID(user.id)}/messages/")
           .limit(1)
-          .orderBy("sentTime",descending: true)
+          .orderBy("sentTime", descending: true)
           .snapshots();
       print("Getting last message");
       return snap;

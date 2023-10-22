@@ -113,6 +113,13 @@ class _ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     child: TextField(
                       controller: _mesgFieldController,
+                      onTap: () {
+                          setState(() {
+                            if(_isEmojiPickerOn){
+                              _isEmojiPickerOn = false;
+                            }
+                          });
+                      },
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       decoration: InputDecoration(
@@ -229,10 +236,10 @@ class _ChatScreenState extends State<ChatScreen> {
               gridPadding: EdgeInsets.zero,
               initCategory: emoji.Category.RECENT,
               bgColor: const Color(0xFFF2F2F2),
-              indicatorColor: Colors.blue,
+              indicatorColor: Theme.of(context).primaryColor,
               iconColor: Colors.grey,
-              iconColorSelected: Colors.blue,
-              backspaceColor: Colors.blue,
+              iconColorSelected: Theme.of(context).primaryColor,
+              backspaceColor: Theme.of(context).primaryColor,
               skinToneDialogBgColor: Colors.white,
               skinToneIndicatorColor: Colors.grey,
               enableSkinTones: true,
@@ -263,19 +270,24 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
       child: SafeArea(
-        child: Scaffold(
-            appBar: AppBar(
-              // title: Text("Chit Chat"),
-              automaticallyImplyLeading: false,
-              flexibleSpace: _customizeAppbar(),
-            ),
-            body: Column(
-              children: [
-                renderChatBody(),
-                renderUserInput(),
-                if (_isEmojiPickerOn) _showEmojiPicker(),
-              ],
-            )),
+        child: GestureDetector(
+          onTap: () {
+            _isEmojiPickerOn = false;
+           FocusScope.of(context).unfocus();},
+          child: Scaffold(
+              appBar: AppBar(
+                // title: Text("Chit Chat"),
+                automaticallyImplyLeading: false,
+                flexibleSpace: _customizeAppbar(),
+              ),
+              body: Column(
+                children: [
+                  renderChatBody(),
+                  renderUserInput(),
+                  if (_isEmojiPickerOn) _showEmojiPicker(),
+                ],
+              )),
+        ),
       ),
     );
   }

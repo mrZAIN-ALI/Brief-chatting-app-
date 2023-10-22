@@ -36,9 +36,10 @@ class _homeScreenState extends State<homeScreen> {
         }
     }
   }
-  //
+  
   void initState(){
     super.initState();
+    print(("Calling getLoggedInUserInfo"));
     Apis.getLoggedInUserInfo(); 
   }
   
