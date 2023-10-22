@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
-
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chit_chat/api/api.dart';
 import 'package:chit_chat/helpers/dialogs.dart';
@@ -21,8 +22,11 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
+  //
+  bool _isEmojiPickerOn = false;
   List<Messages> _listofMessages = [];
+  final TextEditingController _mesgFieldController = TextEditingController();
+  //
   Widget _customizeAppbar() {
     //
     final mediaQ = MediaQuery.of(context).size;
@@ -85,11 +89,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   //for innput of user
   Widget renderUserInput() {
-    final TextEditingController _mesgFieldController = TextEditingController();
-
     final mediaQ = MediaQuery.of(context).size;
     return Padding(
-      padding:  EdgeInsets.symmetric(vertical: mediaQ.height*0.01,horizontal: mediaQ.width*0.02),
+      padding: EdgeInsets.symmetric(
+          vertical: mediaQ.height * 0.01, horizontal: mediaQ.width * 0.02),
       child: Row(
         children: [
           Expanded(
@@ -102,7 +105,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 // crossAxisAlignment: CrossAxisAlignment.baseline,
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () => setState(() {
+                      _isEmojiPickerOn = !_isEmojiPickerOn;
+                    }),
                     icon: Icon(Icons.emoji_emotions_outlined),
                   ),
                   Expanded(
@@ -111,7 +116,6 @@ class _ChatScreenState extends State<ChatScreen> {
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       decoration: InputDecoration(
-
                         hintText: "Type a message",
                         border: InputBorder.none,
                         hintStyle: TextStyle(
@@ -134,15 +138,16 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
           MaterialButton(
-            padding: EdgeInsets.only(left: 10, right: 5,top: 10,bottom: 10),
+            padding: EdgeInsets.only(left: 10, right: 5, top: 10, bottom: 10),
             // padding: EdgeInsets.all(0),
-            minWidth: 0,          
+            minWidth: 0,
             onPressed: () {
               // print("object");
-              if(_mesgFieldController.text.isNotEmpty){
-                Apis.sendMessage(widget.secondPlayer, _mesgFieldController.text);
-                _mesgFieldController.text="";
-              }else{
+              if (_mesgFieldController.text.isNotEmpty) {
+                Apis.sendMessage(
+                    widget.secondPlayer, _mesgFieldController.text);
+                _mesgFieldController.text = "";
+              } else {
                 return null;
               }
             },
@@ -158,50 +163,97 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
+
   //
-  Widget renderChatBody(){
-    List<Messages> list=[];
+  Widget renderChatBody() {
+    List<Messages> list = [];
     return Expanded(
       child: StreamBuilder(
-            stream: Apis.getMessages(widget.secondPlayer),
-            builder: (context, snapshot) {
-              final dataFromSnap = snapshot.data?.docs;
-              switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  return Center(child: CircularProgressIndicator());
-                case ConnectionState.none:
-                  return const Center(
-                    child: Center(child: Text("Start Chating ")),
-                  );
-                case ConnectionState.active:
-                case ConnectionState.done:
-                  // print(jsonEncode(dataFromSnap![0].data()));
-                  list = dataFromSnap!
-                          .map((e) => Messages.fromJson(e.data()))
-                          .toList() ??
-                      [];
-              }
-              // if (snapshot.hasData) {
-              //   // final data = snapshot.data!.docs;
-              //   // print("Date from firestore : ${jsonEncode(data[0].data())}");
-              // }
-              if (list.isNotEmpty) {
-                return ListView.builder(
-                  itemCount:  list.length,
-                  physics: BouncingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return MessageCard(list[index]);
-                  },
-                );
-              } else {
-                return Center(
-                  child: Text("Start Chating"),
-                );
-              }
-            },
-          ),
+        stream: Apis.getMessages(widget.secondPlayer),
+        builder: (context, snapshot) {
+          final dataFromSnap = snapshot.data?.docs;
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return Center(child: CircularProgressIndicator());
+            case ConnectionState.none:
+              return const Center(
+                child: Center(child: Text("Start Chating ")),
+              );
+            case ConnectionState.active:
+            case ConnectionState.done:
+              // print(jsonEncode(dataFromSnap![0].data()));
+              list = dataFromSnap!
+                      .map((e) => Messages.fromJson(e.data()))
+                      .toList() ??
+                  [];
+          }
+          // if (snapshot.hasData) {
+          //   // final data = snapshot.data!.docs;
+          //   // print("Date from firestore : ${jsonEncode(data[0].data())}");
+          // }
+          if (list.isNotEmpty) {
+            return ListView.builder(
+              itemCount: list.length,
+              physics: BouncingScrollPhysics(),
+              itemBuilder: (context, index) {
+                return MessageCard(list[index]);
+              },
+            );
+          } else {
+            return Center(
+              child: Text("Start Chating"),
+            );
+          }
+        },
+      ),
     );
   }
+
+  Widget _showEmojiPicker() {
+    return Offstage(
+      offstage: !_isEmojiPickerOn,
+      child: SizedBox(
+          height: 250,
+          child: emoji.EmojiPicker(
+            textEditingController: _mesgFieldController,
+            // onBackspacePressed: _onBackspacePressed,
+            config: emoji.Config(
+              columns: 7,
+              // Issue: https://github.com/flutter/flutter/issues/28894
+              emojiSizeMax: 32 *
+                  (foundation.defaultTargetPlatform == TargetPlatform.iOS
+                      ? 1.30
+                      : 1.0),
+              verticalSpacing: 0,
+              horizontalSpacing: 0,
+              gridPadding: EdgeInsets.zero,
+              initCategory: emoji.Category.RECENT,
+              bgColor: const Color(0xFFF2F2F2),
+              indicatorColor: Colors.blue,
+              iconColor: Colors.grey,
+              iconColorSelected: Colors.blue,
+              backspaceColor: Colors.blue,
+              skinToneDialogBgColor: Colors.white,
+              skinToneIndicatorColor: Colors.grey,
+              enableSkinTones: true,
+              recentTabBehavior: emoji.RecentTabBehavior.RECENT,
+              recentsLimit: 28,
+              replaceEmojiOnLimitExceed: false,
+              noRecents: const Text(
+                'No Recents',
+                style: TextStyle(fontSize: 20, color: Colors.black26),
+                textAlign: TextAlign.center,
+              ),
+              loadingIndicator: const SizedBox.shrink(),
+              tabIndicatorAnimDuration: kTabScrollDuration,
+              categoryIcons: const emoji.CategoryIcons(),
+              buttonMode: emoji.ButtonMode.MATERIAL,
+              checkPlatformCompatibility: true,
+            ),
+          )),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -221,6 +273,7 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 renderChatBody(),
                 renderUserInput(),
+                if (_isEmojiPickerOn) _showEmojiPicker(),
               ],
             )),
       ),
