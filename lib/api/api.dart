@@ -118,7 +118,7 @@ class Apis {
   }
 
   //Sending message
-  static Future<void> sendMessage(chatUUser_Info reciverr, String msg) async {
+  static Future<void> sendMessage(chatUUser_Info reciverr, String msg,msgType type) async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
 
     Messages messageObj = Messages(
@@ -126,7 +126,7 @@ class Apis {
         msg: msg,
         sentTime: time,
         toId: reciverr.id,
-        typeOfMsg: msgType.text,
+        typeOfMsg: type,
         readTime: " ");
 
     final ref = fireStrore
@@ -165,5 +165,20 @@ class Apis {
       print("Error while fetching messages : $e");
     }
     return {} as Stream<QuerySnapshot<Map<String, dynamic>>>; //returning empty
+  }
+
+  //send image
+
+  static Future<void> sendPhoto_msg(File file,chatUUser_Info secondPlayer) async {
+    final fileExtenstion = file.path.split(".").last;
+    //refering storage locaiton on fitrebase
+    final ref = storage_FirebaseSrg.ref().child(
+        "Imgaes/${getUniqueChatID(secondPlayer.id)}/${DateTime.now().millisecondsSinceEpoch}.$fileExtenstion");
+    //uploading file to firebase storage
+    await ref.putFile(file,SettableMetadata(contentType: "image/$fileExtenstion"));
+    //getting download url
+    final imageUrl=await ref.getDownloadURL();
+    //sending message
+    sendMessage(secondPlayer, imageUrl,msgType.image);
   }
 }

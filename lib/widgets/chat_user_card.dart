@@ -85,7 +85,7 @@ class _chatUserCardState extends State<chatUserCard> {
                       ),
                     ),
                     title: Text(widget._chatUser_info.name),
-                    subtitle: Text(
+                    subtitle: Text( 
                       _tempMessage?.msg ?? "Start Chating",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

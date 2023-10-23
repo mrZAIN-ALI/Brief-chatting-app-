@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chit_chat/api/api.dart';
 import 'package:chit_chat/helpers/dateFormtingUtil.dart';
 import 'package:chit_chat/models/message.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -60,10 +62,25 @@ class _MessageCardState extends State<MessageCard> {
             ),
             child: Padding(
               padding: const EdgeInsets.all(4.0),
-              child: Text(
+              child: widget.message.typeOfMsg == msgType.text ? Text(
                 widget.message.msg ,
                 style: TextStyle(fontSize: 18),
-              ),
+              ):
+              ClipRRect(
+                          child: CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            height: mediaQ.height*0.05,
+                            width:mediaQ.height*0.05,
+                            imageUrl: widget.message.msg,
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) =>
+                                    CircularProgressIndicator(
+                                        value: downloadProgress.progress),
+                            errorWidget: (context, url, error) =>
+                                Icon(CupertinoIcons.photo),
+                          ),
+                        ), 
+              
             ),
           ),
         ),

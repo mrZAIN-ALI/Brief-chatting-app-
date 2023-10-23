@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/foundation.dart' as foundation;
@@ -10,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 //
 import '../models/message.dart';
 
@@ -137,7 +139,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     icon: Icon(Icons.photo),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: ()=>_takeImageFromCamera(),
                     icon: Icon(Icons.camera_alt),
                   ),
                   //
@@ -152,8 +154,8 @@ class _ChatScreenState extends State<ChatScreen> {
             onPressed: () {
               // print("object");
               if (_mesgFieldController.text.isNotEmpty) {
-                Apis.sendMessage(
-                    widget.secondPlayer, _mesgFieldController.text);
+                Apis.sendMessage(widget.secondPlayer, _mesgFieldController.text,
+                    msgType.text);
                 _mesgFieldController.text = "";
               } else {
                 return null;
@@ -260,6 +262,27 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           )),
     );
+  }
+
+  //
+  Future<void> _takeImageFromCamera() async {
+    final ImagePicker picker = ImagePicker();
+// Pick an image.
+    final XFile? picketImage_File =
+        await picker.pickImage(source: ImageSource.camera,imageQuality: 50);
+
+    if (picketImage_File == null) {
+      print("Image not recived from camera");
+    } else {
+      // setState(() {
+      //   _imagePath = picketImage_File.path;
+      // });
+      Apis.sendPhoto_msg(
+        File(picketImage_File.path),
+        widget.secondPlayer,
+      );
+      Navigator.of(context).pop();
+    }
   }
 
   @override
