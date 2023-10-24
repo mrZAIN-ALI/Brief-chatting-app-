@@ -107,7 +107,7 @@ class Apis {
       chatUUser_Info user) {
     try {
       final snap = fireStrore
-          .collection("chats/${getUniqueChatID(user.id)}/messages")
+          .collection("chats/${getUniqueChatID(user.id)}/messages/")
           .snapshots();
       print("Getting messages");
       return snap;
@@ -179,6 +179,6 @@ class Apis {
     //getting download url
     final imageUrl=await ref.getDownloadURL();
     //sending message
-    sendMessage(secondPlayer, imageUrl,msgType.image);
+    await sendMessage(secondPlayer, imageUrl,msgType.image);
   }
 }

@@ -139,7 +139,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     icon: Icon(Icons.photo),
                   ),
                   IconButton(
-                    onPressed: ()=>_takeImageFromCamera(),
+                    onPressed: () => _takeImageFromCamera(),
                     icon: Icon(Icons.camera_alt),
                   ),
                   //
@@ -267,9 +267,9 @@ class _ChatScreenState extends State<ChatScreen> {
   //
   Future<void> _takeImageFromCamera() async {
     final ImagePicker picker = ImagePicker();
-// Pick an image.
+  // Pick an image.
     final XFile? picketImage_File =
-        await picker.pickImage(source: ImageSource.camera,imageQuality: 50);
+        await picker.pickImage(source: ImageSource.camera, imageQuality: 50);
 
     if (picketImage_File == null) {
       print("Image not recived from camera");

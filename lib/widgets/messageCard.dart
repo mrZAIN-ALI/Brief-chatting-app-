@@ -16,7 +16,7 @@ class MessageCard extends StatefulWidget {
 
 class _MessageCardState extends State<MessageCard> {
   Widget _myMessage() {
-    if(widget.message.fromId == widget.message.toId){
+    if (widget.message.fromId == widget.message.toId) {
       Apis.updateMessageStatus(widget.message);
     }
     final mediaQ = MediaQuery.of(context).size;
@@ -28,15 +28,17 @@ class _MessageCardState extends State<MessageCard> {
           child: Column(
             children: [
               Text(
-                DateFormatUtil.FormatDate(context: context, unfromatedDate: widget.message.sentTime),
+                DateFormatUtil.FormatDate(
+                    context: context, unfromatedDate: widget.message.sentTime),
                 // DateTime.parse(widget.message.sentTime.toString()).toString(),
                 style: TextStyle(fontSize: 12, color: Colors.black54),
               ),
-              if(widget.message.readTime!=" ")
-               Icon(
-                Icons.done_all,
-                color: Colors.blue,
-                size: 20,)
+              if (widget.message.readTime != " ")
+                Icon(
+                  Icons.done_all,
+                  color: Colors.blue,
+                  size: 20,
+                )
             ],
           ),
         ),
@@ -62,25 +64,25 @@ class _MessageCardState extends State<MessageCard> {
             ),
             child: Padding(
               padding: const EdgeInsets.all(4.0),
-              child: widget.message.typeOfMsg == msgType.text ? Text(
-                widget.message.msg ,
-                style: TextStyle(fontSize: 18),
-              ):
-              ClipRRect(
-                          child: CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            height: mediaQ.height*0.05,
-                            width:mediaQ.height*0.05,
-                            imageUrl: widget.message.msg,
-                            progressIndicatorBuilder:
-                                (context, url, downloadProgress) =>
-                                    CircularProgressIndicator(
-                                        value: downloadProgress.progress),
-                            errorWidget: (context, url, error) =>
-                                Icon(CupertinoIcons.photo),
-                          ),
-                        ), 
-              
+              child: widget.message.typeOfMsg == msgType.text
+                  ? Text(
+                      widget.message.msg,
+                      style: TextStyle(fontSize: 18),
+                    )
+                  : ClipRRect(
+                      child: CachedNetworkImage(
+                        fit: BoxFit.cover,
+                        height: mediaQ.height * 0.05,
+                        width: mediaQ.height * 0.05,
+                        imageUrl: widget.message.msg,
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) =>
+                                CircularProgressIndicator(
+                                    value: downloadProgress.progress),
+                        errorWidget: (context, url, error) =>
+                            Icon(CupertinoIcons.photo),
+                      ),
+                    ),
             ),
           ),
         ),
@@ -92,8 +94,8 @@ class _MessageCardState extends State<MessageCard> {
   Widget _secondPlayer() {
     final mediaQ = MediaQuery.of(context).size;
 
-    if(widget.message.readTime!=" "){
-      Apis.updateMessageStatus( widget.message);
+    if (widget.message.readTime != " ") {
+      Apis.updateMessageStatus(widget.message);
     }
     return Row(
       // mainAxisAlignment: MainAxisAlignment.start,
@@ -120,7 +122,7 @@ class _MessageCardState extends State<MessageCard> {
             child: Padding(
               padding: const EdgeInsets.all(4.0),
               child: Text(
-                widget.message.msg ,
+                widget.message.msg,
                 style: TextStyle(fontSize: 18),
               ),
             ),
@@ -132,15 +134,17 @@ class _MessageCardState extends State<MessageCard> {
           child: Column(
             children: [
               Text(
-                DateFormatUtil.FormatDate(context: context, unfromatedDate: widget.message.sentTime),
+                DateFormatUtil.FormatDate(
+                    context: context, unfromatedDate: widget.message.sentTime),
                 // DateTime.parse(widget.message.sentTime.toString()).toString(),
                 style: TextStyle(fontSize: 12, color: Colors.black54),
               ),
-              if(widget.message.readTime!=" ")
-               Icon(
-                Icons.done_all,
-                color: Colors.blue,
-                size: 20,)
+              if (widget.message.readTime != " ")
+                Icon(
+                  Icons.done_all,
+                  color: Colors.blue,
+                  size: 20,
+                )
             ],
           ),
         ),
