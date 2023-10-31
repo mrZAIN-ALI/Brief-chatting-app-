@@ -108,6 +108,8 @@ class Apis {
     //   chatUUser_Info user) {
     // i broke the streak
     //prep for scd paper
+    //prep for BIT paper
+    //why this problem
   static Stream<QuerySnapshot<Map<String, dynamic>>> getMessages(
       chatUUser_Info user) {
     try {
