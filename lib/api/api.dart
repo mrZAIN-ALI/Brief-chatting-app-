@@ -103,15 +103,7 @@ class Apis {
 
   //
   //Fetchign MEssages
-  //asdadasds
-    // static Stream<QuerySnapshot<Map<String, dynamic>>> getMessages(
-    //   chatUUser_Info user) {
-    // i broke the streak
-    //prep for scd paper
-    //prep for BIT paper
-    //why this problem
-    //Prep for TWPS and HQT
-    //prep for AI
+
   static Stream<QuerySnapshot<Map<String, dynamic>>> getMessages(
       chatUUser_Info user) {
     try {
