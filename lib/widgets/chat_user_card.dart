@@ -30,6 +30,8 @@ class _chatUserCardState extends State<chatUserCard> {
         onTap: () {
           Navigator.push(context, MaterialPageRoute(
             builder: (context) {
+              // print("chatUserCard: ${widget._chatUser_info.name}");
+
               return ChatScreen(widget._chatUser_info);
             },
           ));

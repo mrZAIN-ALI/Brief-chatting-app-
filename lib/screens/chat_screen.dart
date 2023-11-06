@@ -191,7 +191,7 @@ class _ChatScreenState extends State<ChatScreen> {
               );
             case ConnectionState.active:
             case ConnectionState.done:
-              // print(jsonEncode(dataFromSnap![0].data()));
+              // print("Printing Messeges get from api.getMessages(widget.secondPlayer)"+jsonEncode(dataFromSnap![0].data()));
               list = dataFromSnap!
                       .map((e) => Messages.fromJson(e.data()))
                       .toList() ??
@@ -206,6 +206,8 @@ class _ChatScreenState extends State<ChatScreen> {
               itemCount: list.length,
               physics: BouncingScrollPhysics(),
               itemBuilder: (context, index) {
+                // print("Sending messages to message Card Widget"+list[index].msg);
+                // list[index].msg ?? Print("Message is null"):
                 return MessageCard(list[index]);
               },
             );
@@ -281,7 +283,7 @@ class _ChatScreenState extends State<ChatScreen> {
         File(picketImage_File.path),
         widget.secondPlayer,
       );
-      Navigator.of(context).pop();
+      // Navigator.of(context).pop();
     }
   }
 

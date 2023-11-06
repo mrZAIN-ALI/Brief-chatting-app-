@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chit_chat/api/api.dart';
 import 'package:chit_chat/helpers/dateFormtingUtil.dart';
-import 'package:chit_chat/models/message.dart';
+import 'package:chit_chat/models/message.dart' as m;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class MessageCard extends StatefulWidget {
-  final Messages message;
+  final m.Messages message;
   const MessageCard(this.message);
 
   @override
@@ -64,16 +64,15 @@ class _MessageCardState extends State<MessageCard> {
             ),
             child: Padding(
               padding: const EdgeInsets.all(4.0),
-              child: widget.message.typeOfMsg == msgType.text
+              child: widget.message.typeOfMsg == m.msgType.text
                   ? Text(
                       widget.message.msg,
                       style: TextStyle(fontSize: 18),
                     )
                   : ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
                       child: CachedNetworkImage(
                         fit: BoxFit.cover,
-                        height: mediaQ.height * 0.05,
-                        width: mediaQ.height * 0.05,
                         imageUrl: widget.message.msg,
                         progressIndicatorBuilder:
                             (context, url, downloadProgress) =>
@@ -84,6 +83,12 @@ class _MessageCardState extends State<MessageCard> {
                       ),
                     ),
             ),
+            // child: Padding(
+            //     padding: const EdgeInsets.all(4.0),
+            //     child: Text(
+            //       widget.message.msg,
+            //       style: TextStyle(fontSize: 18),
+            //     )),
           ),
         ),
         //

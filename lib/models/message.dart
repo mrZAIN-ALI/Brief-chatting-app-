@@ -19,7 +19,7 @@ class Messages {
     msg = json['msg'].toString();
     readTime = json['readTime'].toString();
     sentTime = json['sentTime'].toString();
-    typeOfMsg = json['typeOfMsg'].toString() == msgType.text.name ? msgType.text : msgType.image;
+    typeOfMsg = json['typeOfMsg'] == msgType.text.toString() ? msgType.text : msgType.image;
     fromId = json['fromId'].toString();
   }
 
@@ -34,4 +34,4 @@ class Messages {
     return _data;
   }
 }
- enum msgType {text,image}
+enum msgType {text,image}
