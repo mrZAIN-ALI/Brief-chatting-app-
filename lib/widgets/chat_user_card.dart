@@ -65,7 +65,7 @@ class _chatUserCardState extends State<chatUserCard> {
               return FutureBuilder(
                 future: Apis.getLoggedInUserInfo(),
                 builder: (context, snapshot) {
-                  if(snapshot.connectionState==ConnectionState.waiting){
+                  if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: LinearProgressIndicator());
                   }
                   return ListTile(
@@ -87,8 +87,12 @@ class _chatUserCardState extends State<chatUserCard> {
                       ),
                     ),
                     title: Text(widget._chatUser_info.name),
-                    subtitle: Text( 
-                      _tempMessage?.msg ?? "Start Chating",
+                    subtitle: Text(
+                      _tempMessage != null
+                          ? _tempMessage?.typeOfMsg == msgType.text
+                              ? _tempMessage!.msg
+                              : "Image"
+                          : _tempMessage?.msg ?? "Start Chating",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),

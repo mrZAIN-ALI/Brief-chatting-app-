@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:chit_chat/models/user.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:cached_network_image/cached_network_image.dart';
@@ -33,59 +34,74 @@ class _ChatScreenState extends State<ChatScreen> {
     //
     final mediaQ = MediaQuery.of(context).size;
     //
-    return Row(
-      children: [
-        IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.black45,
-          ),
-        ),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(
-              (mediaQ.height * 0.05) / 2), // Make it a circle
-          child: CachedNetworkImage(
-            height: mediaQ.height * 0.05,
-            width: mediaQ.height * 0.05, // Make the width equal to height
-            imageUrl: widget.secondPlayer.image ??
-                "http://via.placeholder.com/350x150",
-            progressIndicatorBuilder: (context, url, downloadProgress) =>
-                CircularProgressIndicator(value: downloadProgress.progress),
-            errorWidget: (context, url, error) => Icon(CupertinoIcons.person),
-          ),
-        ),
-        SizedBox(
-          width: mediaQ.width * 0.05,
-        ),
-        //
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
+    return StreamBuilder(
+      stream: Apis.get_UserInfo(widget.secondPlayer),
+      builder: (context, snapshot) {
+        final data = snapshot.data?.docs;
+        final list_ = data!
+            .map((e) => chatUUser_Info.mapJsonToModelObject(e.data()))
+            .toList();
+
+        return Row(
           children: [
-            Text(
-              widget.secondPlayer.name,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.black45,
+              ),
+            ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(
+                  (mediaQ.height * 0.05) / 2), // Make it a circle
+              child: CachedNetworkImage(
+                height: mediaQ.height * 0.05,
+                width: mediaQ.height * 0.05, // Make the width equal to height
+                imageUrl: list_.isNotEmpty
+                    ? list_[0].image
+                    : widget.secondPlayer.image ??
+                        "http://via.placeholder.com/350x150",
+                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    CircularProgressIndicator(value: downloadProgress.progress),
+                errorWidget: (context, url, error) =>
+                    Icon(CupertinoIcons.person),
               ),
             ),
             SizedBox(
-              height: 5,
+              width: mediaQ.width * 0.05,
             ),
-            Text(
-              "Lat Seen Not available HEH",
-              style: TextStyle(
-                color: Colors.black54,
-                fontSize: 13,
-              ),
-              overflow: TextOverflow.ellipsis,
+            //
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  list_.isNotEmpty ? list_[0].name :
+                  widget.secondPlayer.name ,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                  ),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  list_.isNotEmpty ? list_[0].isOnline? "Online" : list_[0].lastActive :
+                  "Lat Seen Not available HEH",
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 13,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -203,6 +219,7 @@ class _ChatScreenState extends State<ChatScreen> {
           // }
           if (list.isNotEmpty) {
             return ListView.builder(
+              reverse: true,
               itemCount: list.length,
               physics: BouncingScrollPhysics(),
               itemBuilder: (context, index) {
@@ -269,7 +286,7 @@ class _ChatScreenState extends State<ChatScreen> {
   //
   Future<void> _takeImageFromCamera() async {
     final ImagePicker picker = ImagePicker();
-  // Pick an image.
+    // Pick an image.
     final XFile? picketImage_File =
         await picker.pickImage(source: ImageSource.camera, imageQuality: 50);
 
@@ -284,6 +301,25 @@ class _ChatScreenState extends State<ChatScreen> {
         widget.secondPlayer,
       );
       // Navigator.of(context).pop();
+    }
+  }
+
+  //
+  Future<void> _takeMultipleImagesFromCamera() async {
+    final ImagePicker picker = ImagePicker();
+    // Pick an image.
+    final List<XFile?> picketImage_File =
+        await picker.pickMultiImage(imageQuality: 80);
+
+    if (picketImage_File.isEmpty) {
+      print("Image not recived from camera");
+    } else {
+      for (var i in picketImage_File) {
+        Apis.sendPhoto_msg(
+          File(i!.path),
+          widget.secondPlayer,
+        );
+      }
     }
   }
 

@@ -103,12 +103,13 @@ class Apis {
 
   //
   //Fetchign MEssages
-   // AIK AUR CHIK CHIK OF CN LAB
+  // AIK AUR CHIK CHIK OF CN LAB
   static Stream<QuerySnapshot<Map<String, dynamic>>> getMessages(
       chatUUser_Info user) {
     try {
       final snap = fireStrore
           .collection("chats/${getUniqueChatID(user.id)}/messages/")
+          .orderBy("sentTime", descending: true)
           .snapshots();
       print("Getting messages");
       return snap;
@@ -119,7 +120,8 @@ class Apis {
   }
 
   //Sending message
-  static Future<void> sendMessage(chatUUser_Info reciverr, String msg,msgType type) async {
+  static Future<void> sendMessage(
+      chatUUser_Info reciverr, String msg, msgType type) async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
 
     Messages messageObj = Messages(
@@ -170,16 +172,35 @@ class Apis {
 
   //send image
 
-  static Future<void> sendPhoto_msg(File file,chatUUser_Info secondPlayer) async {
+  static Future<void> sendPhoto_msg(
+      File file, chatUUser_Info secondPlayer) async {
     final fileExtenstion = file.path.split(".").last;
     //refering storage locaiton on fitrebase
     final ref = storage_FirebaseSrg.ref().child(
         "Imgaes/${getUniqueChatID(secondPlayer.id)}/${DateTime.now().millisecondsSinceEpoch}.$fileExtenstion");
     //uploading file to firebase storage
-    await ref.putFile(file,SettableMetadata(contentType: "image/$fileExtenstion"));
+    await ref.putFile(
+        file, SettableMetadata(contentType: "image/$fileExtenstion"));
     //getting download url
-    final imageUrl=await ref.getDownloadURL();
+    final imageUrl = await ref.getDownloadURL();
     //sending message
-    await sendMessage(secondPlayer, imageUrl,msgType.image);
+    await sendMessage(secondPlayer, imageUrl, msgType.image);
+  }
+
+  //GET user information
+  static Stream<QuerySnapshot<Map<String, dynamic>>> get_UserInfo(
+      secondPlayer) {
+    return Apis.fireStrore
+        .collection("users")
+        .where("id", isEqualTo: secondPlayer.id)
+        .snapshots();
+  }
+  //update active status of user
+  static Future<void> updateActiveStatus(bool status){
+    return fireStrore.collection("users").doc(current_User!.uid).update({
+      "isOnline":status,
+      "lastActive":DateTime.now().millisecondsSinceEpoch.toString(),
+    });
+    
   }
 }
