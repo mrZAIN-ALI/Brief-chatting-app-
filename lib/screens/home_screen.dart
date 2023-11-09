@@ -5,6 +5,7 @@ import 'package:chit_chat/widgets/chat_user_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 //
 
 class homeScreen extends StatefulWidget {
@@ -38,9 +39,21 @@ class _homeScreenState extends State<homeScreen> {
   }
   
   void initState(){
+    
     super.initState();
     print(("Calling getLoggedInUserInfo"));
     Apis.getLoggedInUserInfo(); 
+    Apis.updateActiveStatus(true);
+    SystemChannels.lifecycle.setMessageHandler((message) {
+      print("Hallo kalo $message");
+      if(message.toString().contains("resume")){
+        Apis.updateActiveStatus(false);
+      }
+            if(message.toString().contains("pause")){
+        Apis.updateActiveStatus(false);
+      }
+      return Future.value(message);
+    });
   }
   
   @override

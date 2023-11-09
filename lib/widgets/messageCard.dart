@@ -126,10 +126,24 @@ class _MessageCardState extends State<MessageCard> {
             ),
             child: Padding(
               padding: const EdgeInsets.all(4.0),
-              child: Text(
-                widget.message.msg,
-                style: TextStyle(fontSize: 18),
-              ),
+              child: widget.message.typeOfMsg == m.msgType.text
+                  ? Text(
+                      widget.message.msg,
+                      style: TextStyle(fontSize: 18),
+                    )
+                  : ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: CachedNetworkImage(
+                        fit: BoxFit.cover,
+                        imageUrl: widget.message.msg,
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) =>
+                                CircularProgressIndicator(
+                                    value: downloadProgress.progress),
+                        errorWidget: (context, url, error) =>
+                            Icon(CupertinoIcons.photo),
+                      ),
+                    ),
             ),
           ),
         ),

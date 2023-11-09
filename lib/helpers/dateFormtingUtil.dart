@@ -53,7 +53,7 @@ class DateFormatUtil {
   }
 
   //format last active time
-  String formatLastActiveTime(
+  static String formatLastActiveTime(
       {required BuildContext context, required String lastActive}) {
     final int intTime = int.tryParse(lastActive) ?? -1;
 
@@ -75,6 +75,6 @@ class DateFormatUtil {
       return "Last Seen Yesterday at $formatedTime";
     }
     String month = getMonth(intTime);
-    return "Last Seen on ${time.day} ${time.month} $formatedTime";
+    return "Last Seen on ${time.day} ${getMonth(time.month)} $formatedTime";
   }
 }

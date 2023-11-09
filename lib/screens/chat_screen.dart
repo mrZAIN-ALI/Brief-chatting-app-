@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:chit_chat/helpers/dateFormtingUtil.dart';
 import 'package:chit_chat/models/user.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/foundation.dart' as foundation;
@@ -37,8 +38,13 @@ class _ChatScreenState extends State<ChatScreen> {
     return StreamBuilder(
       stream: Apis.get_UserInfo(widget.secondPlayer),
       builder: (context, snapshot) {
-        final data = snapshot.data?.docs;
-        final list_ = data!
+        if (snapshot.data == null) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        final data = snapshot.data!.docs;
+        final list_ = data
             .map((e) => chatUUser_Info.mapJsonToModelObject(e.data()))
             .toList();
 
@@ -78,8 +84,7 @@ class _ChatScreenState extends State<ChatScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  list_.isNotEmpty ? list_[0].name :
-                  widget.secondPlayer.name ,
+                  list_.isNotEmpty ? list_[0].name : widget.secondPlayer.name,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 18,
@@ -89,8 +94,17 @@ class _ChatScreenState extends State<ChatScreen> {
                   height: 5,
                 ),
                 Text(
-                  list_.isNotEmpty ? list_[0].isOnline? "Online" : list_[0].lastActive :
-                  "Lat Seen Not available HEH",
+                  list_.isNotEmpty
+                      ? list_[0].isOnline
+                          ? "Online"
+                          : DateFormatUtil.formatLastActiveTime(
+                              context: context,
+                              lastActive: list_[0].lastActive,
+                            )
+                      : DateFormatUtil.formatLastActiveTime(
+                          context: context,
+                          lastActive: widget.secondPlayer.lastActive,
+                        ),
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 13,
