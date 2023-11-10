@@ -10,12 +10,12 @@ class DateFormatUtil {
   }
 
   static String formatLastMesgSentTime(
-      {required BuildContext context, required String unfromatedDate}) {
+      {required BuildContext context, required String unfromatedDate, required bool showYear}) {
     final time = DateTime.fromMillisecondsSinceEpoch(int.parse(unfromatedDate));
     final currentTime = DateTime.now();
     final difference = currentTime.difference(time);
     if (difference.inDays > 0) {
-      return "${time.day} ${getMonth(time.month)}";
+      return "${time.day} ${getMonth(time.month)} ${showYear?time.year:""}";
     } else {
       return TimeOfDay.fromDateTime(time).format(context);
     }

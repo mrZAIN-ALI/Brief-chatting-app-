@@ -5,6 +5,7 @@ import 'package:chit_chat/api/api.dart';
 import 'package:chit_chat/helpers/dialogs.dart';
 import 'package:chit_chat/models/user.dart';
 import 'package:chit_chat/screens/auth_Screens/login_Screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -229,7 +230,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               //
               Text(
                 widget.user_Info.email,
-                style: TextStyle(color: Colors.black54),
+                style: TextStyle(color: Colors.black54 , fontSize: 20),
               ),
               //
               makeSomeVerticalSpace(0.04),
@@ -369,11 +370,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         //
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
+            Apis.updateActiveStatus(false);
+            //
             DialogHelper.showProgressIndicator(context);
             await Apis.auth.signOut().then((value) async {
               await GoogleSignIn().signOut().then((value) {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
+                //
+                Apis.auth =FirebaseAuth.instance;
                 //
                 Navigator.pushReplacement(
                   context,

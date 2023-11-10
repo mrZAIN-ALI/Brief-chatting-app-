@@ -112,7 +112,8 @@ class _chatUserCardState extends State<chatUserCard> {
                             : Text(
                                 DateFormatUtil.formatLastMesgSentTime(
                                     context: context,
-                                    unfromatedDate: _tempMessage!.sentTime),
+                                    unfromatedDate: _tempMessage!.sentTime
+                                    ,showYear: false),
                                 style: TextStyle(
                                     fontSize: 15, color: Colors.black54),
                               ),

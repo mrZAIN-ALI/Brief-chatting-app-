@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:chit_chat/helpers/dateFormtingUtil.dart';
 import 'package:chit_chat/models/user.dart';
+import 'package:chit_chat/screens/secondPlayerProfile_screen.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:cached_network_image/cached_network_image.dart';
@@ -35,87 +36,98 @@ class _ChatScreenState extends State<ChatScreen> {
     //
     final mediaQ = MediaQuery.of(context).size;
     //
-    return StreamBuilder(
-      stream: Apis.get_UserInfo(widget.secondPlayer),
-      builder: (context, snapshot) {
-        if (snapshot.data == null) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        final data = snapshot.data!.docs;
-        final list_ = data
-            .map((e) => chatUUser_Info.mapJsonToModelObject(e.data()))
-            .toList();
-
-        return Row(
-          children: [
-            IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.black45,
-              ),
-            ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(
-                  (mediaQ.height * 0.05) / 2), // Make it a circle
-              child: CachedNetworkImage(
-                height: mediaQ.height * 0.05,
-                width: mediaQ.height * 0.05, // Make the width equal to height
-                imageUrl: list_.isNotEmpty
-                    ? list_[0].image
-                    : widget.secondPlayer.image ??
-                        "http://via.placeholder.com/350x150",
-                progressIndicatorBuilder: (context, url, downloadProgress) =>
-                    CircularProgressIndicator(value: downloadProgress.progress),
-                errorWidget: (context, url, error) =>
-                    Icon(CupertinoIcons.person),
-              ),
-            ),
-            SizedBox(
-              width: mediaQ.width * 0.05,
-            ),
-            //
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  list_.isNotEmpty ? list_[0].name : widget.secondPlayer.name,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                  ),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                  list_.isNotEmpty
-                      ? list_[0].isOnline
-                          ? "Online"
-                          : DateFormatUtil.formatLastActiveTime(
-                              context: context,
-                              lastActive: list_[0].lastActive,
-                            )
-                      : DateFormatUtil.formatLastActiveTime(
-                          context: context,
-                          lastActive: widget.secondPlayer.lastActive,
-                        ),
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 13,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ],
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => secondPlayerProfile(widget.secondPlayer),
+          ),
         );
       },
+      child: StreamBuilder(
+        stream: Apis.get_UserInfo(widget.secondPlayer),
+        builder: (context, snapshot) {
+          if (snapshot.data == null) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          final data = snapshot.data!.docs;
+          final list_ = data
+              .map((e) => chatUUser_Info.mapJsonToModelObject(e.data()))
+              .toList();
+
+          return Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Colors.black45,
+                ),
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(
+                    (mediaQ.height * 0.05) / 2), // Make it a circle
+                child: CachedNetworkImage(
+                  height: mediaQ.height * 0.05,
+                  width: mediaQ.height * 0.05, // Make the width equal to height
+                  imageUrl: list_.isNotEmpty
+                      ? list_[0].image
+                      : widget.secondPlayer.image ??
+                          "http://via.placeholder.com/350x150",
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      CircularProgressIndicator(
+                          value: downloadProgress.progress),
+                  errorWidget: (context, url, error) =>
+                      Icon(CupertinoIcons.person),
+                ),
+              ),
+              SizedBox(
+                width: mediaQ.width * 0.05,
+              ),
+              //
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    list_.isNotEmpty ? list_[0].name : widget.secondPlayer.name,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    list_.isNotEmpty
+                        ? list_[0].isOnline
+                            ? "Online"
+                            : DateFormatUtil.formatLastActiveTime(
+                                context: context,
+                                lastActive: list_[0].lastActive,
+                              )
+                        : DateFormatUtil.formatLastActiveTime(
+                            context: context,
+                            lastActive: widget.secondPlayer.lastActive,
+                          ),
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 13,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 

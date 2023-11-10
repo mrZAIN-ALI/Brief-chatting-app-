@@ -13,84 +13,88 @@ class homeScreen extends StatefulWidget {
 
   @override
   State<homeScreen> createState() => _homeScreenState();
-  
 }
 
 class _homeScreenState extends State<homeScreen> {
-  bool _is_Searching=false;
+  bool _is_Searching = false;
   //for string all users
   // final List<chatUUser_Info> _list=[];
   //For stroing searched items
-  final List<chatUUser_Info> _searchList=[];
+  final List<chatUUser_Info> _searchList = [];
 
   List<chatUUser_Info> _list_UserInfo = [];
 
-  void searchUserFromMainList(value){
+  void searchUserFromMainList(value) {
     _searchList.clear();
-    for(var i in _list_UserInfo){
-        if(i.name.toLowerCase().contains(value.toLowerCase())|| i.email.toLowerCase().contains(value.toLowerCase())){
-            setState(() {
-              
-            _searchList.add(i);
-            });
-
-        }
+    for (var i in _list_UserInfo) {
+      if (i.name.toLowerCase().contains(value.toLowerCase()) ||
+          i.email.toLowerCase().contains(value.toLowerCase())) {
+        setState(() {
+          _searchList.add(i);
+        });
+      }
     }
   }
-  
-  void initState(){
-    
+
+  void initState() {
     super.initState();
     print(("Calling getLoggedInUserInfo"));
-    Apis.getLoggedInUserInfo(); 
+    Apis.getLoggedInUserInfo();
     Apis.updateActiveStatus(true);
     SystemChannels.lifecycle.setMessageHandler((message) {
-      print("Hallo kalo $message");
-      if(message.toString().contains("resume")){
-        Apis.updateActiveStatus(false);
-      }
-            if(message.toString().contains("pause")){
-        Apis.updateActiveStatus(false);
+      if (Apis.auth.currentUser != null) {
+        if (message.toString().contains("resume")) {
+          Apis.updateActiveStatus(true);
+        }
+        if (message.toString().contains("pause") ||
+            message.toString().contains("inactive")) {
+          Apis.updateActiveStatus(false);
+        }
       }
       return Future.value(message);
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        if(_is_Searching){
+        if (_is_Searching) {
           setState(() {
-            _is_Searching=!_is_Searching;
+            _is_Searching = !_is_Searching;
             // _searchList.clear();
           });
           return Future.value(false);
-        }else{
+        } else {
           return Future.value(true);
-
         }
       },
       child: Scaffold(
         appBar: AppBar(
           leading: Icon(Icons.home_outlined),
-          title: _is_Searching ? TextField(
-            decoration: InputDecoration(border: InputBorder.none,hintText:  "Name or Email",),
-            autofocus: true,
-            style: TextStyle(fontSize: 25),
-            onChanged:  (value) {
-              searchUserFromMainList(value);
-            },
-          ): Text("Chit Chat"),
+          title: _is_Searching
+              ? TextField(
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: "Name or Email",
+                  ),
+                  autofocus: true,
+                  style: TextStyle(fontSize: 25),
+                  onChanged: (value) {
+                    searchUserFromMainList(value);
+                  },
+                )
+              : Text("Chit Chat"),
           actions: [
             IconButton(
               onPressed: () {
                 setState(() {
-                  _is_Searching=!_is_Searching;
+                  _is_Searching = !_is_Searching;
                   _searchList.clear();
                 });
               },
-              icon: Icon(_is_Searching ? CupertinoIcons.clear_circled : Icons.search),
+              icon: Icon(
+                  _is_Searching ? CupertinoIcons.clear_circled : Icons.search),
             ),
             IconButton(
               onPressed: () => Navigator.push(
@@ -117,7 +121,8 @@ class _homeScreenState extends State<homeScreen> {
               case ConnectionState.active:
               case ConnectionState.done:
                 _list_UserInfo = dataFromSnap!
-                        .map((e) => chatUUser_Info.mapJsonToModelObject(e.data()))
+                        .map((e) =>
+                            chatUUser_Info.mapJsonToModelObject(e.data()))
                         .toList() ??
                     [];
             }
@@ -127,11 +132,13 @@ class _homeScreenState extends State<homeScreen> {
             }
             if (_list_UserInfo.isNotEmpty) {
               return ListView.builder(
-                
-                itemCount: _is_Searching ? _searchList.length : _list_UserInfo.length,
+                itemCount:
+                    _is_Searching ? _searchList.length : _list_UserInfo.length,
                 physics: BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return chatUserCard(_is_Searching ? _searchList[index] : _list_UserInfo[index]);
+                  return chatUserCard(_is_Searching
+                      ? _searchList[index]
+                      : _list_UserInfo[index]);
                 },
               );
             } else {

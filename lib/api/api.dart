@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class Apis {
-  static final FirebaseAuth auth = FirebaseAuth.instance;
+  static  FirebaseAuth auth = FirebaseAuth.instance;
   //
   static final FirebaseFirestore fireStrore = FirebaseFirestore.instance;
   //
@@ -23,7 +23,7 @@ class Apis {
   }
 
   //
-  
+
   static Future<void> createUser() async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
     final chatUser = chatUUser_Info(
@@ -190,18 +190,19 @@ class Apis {
 
   //GET user information
   static Stream<QuerySnapshot<Map<String, dynamic>>> get_UserInfo(
-      secondPlayer) {
+    secondPlayer,
+  ) {
     return Apis.fireStrore
         .collection("users")
         .where("id", isEqualTo: secondPlayer.id)
         .snapshots();
   }
+
   //update active status of user
-  static Future<void> updateActiveStatus(bool status){
+  static Future<void> updateActiveStatus(bool stat) {
     return fireStrore.collection("users").doc(current_User!.uid).update({
-      "isOnline":status,
-      "lastActive":DateTime.now().millisecondsSinceEpoch.toString(),
+      "isOnline": stat,
+      "lastActive": DateTime.now().millisecondsSinceEpoch.toString(),
     });
-    
   }
 }
