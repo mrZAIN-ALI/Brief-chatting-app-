@@ -3,6 +3,7 @@ import 'package:chit_chat/helpers/dateFormtingUtil.dart';
 import 'package:chit_chat/models/message.dart';
 import 'package:chit_chat/models/user.dart';
 import 'package:chit_chat/screens/chat_screen.dart';
+import 'package:chit_chat/widgets/diallogs/profilePicDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -69,21 +70,28 @@ class _chatUserCardState extends State<chatUserCard> {
                     return Center(child: LinearProgressIndicator());
                   }
                   return ListTile(
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                          (mediaQ.height * 0.05) / 2), // Make it a circle
-                      child: CachedNetworkImage(
-                        height: mediaQ.height * 0.05,
-                        width: mediaQ.height *
-                            0.05, // Make the width equal to height
-                        imageUrl: widget._chatUser_info.image ??
-                            "http://via.placeholder.com/350x150",
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) =>
-                                CircularProgressIndicator(
-                                    value: downloadProgress.progress),
-                        errorWidget: (context, url, error) =>
-                            Icon(CupertinoIcons.person),
+                    leading: InkWell(
+                      onTap: () {
+                        showDialog(context: context, builder: (context) {
+                          return profilePicDialog(secondPlayer: widget._chatUser_info,);
+                        },);
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            (mediaQ.height * 0.05) / 2), // Make it a circle
+                        child: CachedNetworkImage(
+                          height: mediaQ.height * 0.05,
+                          width: mediaQ.height *
+                              0.05, // Make the width equal to height
+                          imageUrl: widget._chatUser_info.image ??
+                              "http://via.placeholder.com/350x150",
+                          progressIndicatorBuilder:
+                              (context, url, downloadProgress) =>
+                                  CircularProgressIndicator(
+                                      value: downloadProgress.progress),
+                          errorWidget: (context, url, error) =>
+                              Icon(CupertinoIcons.person),
+                        ),
                       ),
                     ),
                     title: Text(widget._chatUser_info.name),
