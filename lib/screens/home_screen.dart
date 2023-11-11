@@ -39,7 +39,7 @@ class _homeScreenState extends State<homeScreen> {
   void initState() {
     super.initState();
     print(("Calling getLoggedInUserInfo"));
-    Apis.getLoggedInUserInfo();
+    Apis.getLoggedInUserInfo().then((value) => Apis.getFCM_Token());
     Apis.updateActiveStatus(true);
     SystemChannels.lifecycle.setMessageHandler((message) {
       if (Apis.auth.currentUser != null) {

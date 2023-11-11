@@ -1,10 +1,11 @@
-import 'dart:io' show File;
+  import 'dart:io' show File;
 
 import 'package:chit_chat/models/message.dart';
 import 'package:chit_chat/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Apis {
   static  FirebaseAuth auth = FirebaseAuth.instance;
@@ -16,6 +17,17 @@ class Apis {
   static final current_User = auth.currentUser;
   //
   static late chatUUser_Info me_LoggedIn;
+  //
+  static FirebaseMessaging f_messageing=FirebaseMessaging.instance;
+  //
+  static Future<void> getFCM_Token() async {
+    await f_messageing.requestPermission();
+    f_messageing.getToken().then((value) {
+      if(value!=null)
+        me_LoggedIn.pushToken = value;
+      print("FCM Token : $value");
+    });
+  }
   //
   static Future<bool> userExists() async {
     return (await fireStrore.collection("users").doc(current_User!.uid).get())
