@@ -1,4 +1,5 @@
-  import 'dart:io' show File;
+import 'dart:convert';
+import 'dart:io' show File, HttpHeaders;
 
 import 'package:chit_chat/models/message.dart';
 import 'package:chit_chat/models/user.dart';
@@ -6,9 +7,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart';
 
 class Apis {
-  static  FirebaseAuth auth = FirebaseAuth.instance;
+  static FirebaseAuth auth = FirebaseAuth.instance;
   //
   static final FirebaseFirestore fireStrore = FirebaseFirestore.instance;
   //
@@ -18,17 +20,17 @@ class Apis {
   //
   static late chatUUser_Info me_LoggedIn;
   //
-  static FirebaseMessaging f_messageing=FirebaseMessaging.instance;
+  static FirebaseMessaging f_messageing = FirebaseMessaging.instance;
   //
   static Future<void> getFCM_Token() async {
     await f_messageing.requestPermission();
     f_messageing.getToken().then((value) {
-      if(value!=null)
-        me_LoggedIn.pushToken = value;
+      if (value != null) me_LoggedIn.pushToken = value;
       print("FCM Token : $value");
       //presentatio prep fpr cn
     });
   }
+
   //
   static Future<bool> userExists() async {
     return (await fireStrore.collection("users").doc(current_User!.uid).get())
@@ -151,7 +153,10 @@ class Apis {
     final jsonFormtOfMsg = messageObj.toJson();
 
     try {
-      await ref.doc(time).set(jsonFormtOfMsg);
+      await ref.doc(time).set(jsonFormtOfMsg).then(
+            (value) => sendPushNotification(
+                reciverr, type == msgType.text ? msg : "Image"),
+          );
       print("Message Sent");
     } catch (e) {
       print("Error while sending message : $e");
@@ -217,5 +222,29 @@ class Apis {
       "isOnline": stat,
       "lastActive": DateTime.now().millisecondsSinceEpoch.toString(),
     });
+  }
+
+  //for sending push notifation of message sen to secondplyaer
+  static Future<void> sendPushNotification(
+      chatUUser_Info secondPlayer, String msg) async {
+    try {
+      final body = {
+        "to": secondPlayer.pushToken,
+        "notification": {"title": secondPlayer.name, "body": msg},
+      };
+      var resoponse = await post(
+        Uri.parse("https//fcm.googleapis.com/fcm/send"),
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          HttpHeaders.authorizationHeader:
+              "key=AAAA3v9gqd8:APA91bFEgFC4Ts2yrpjO30TKoIEU2_I94WAi66whT4AFmGxVKFpE8D_z_es-Jo9UtcXRBMjxB20qD7YQnZyu2861A9ZsEy9u7N_GeVuIJkQxfIzaf3w6dhMv7g7DUhnzbumyk_QEhoaW",
+        },
+        body: jsonEncode(body),
+      );
+      print("Resoponse staus : ${resoponse.statusCode}");
+      print("Resoponse body : ${resoponse.body}");
+    } catch (e) {
+      print("sendPushNotification:Error while sending push notification : $e");
+    }
   }
 }

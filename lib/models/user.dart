@@ -47,4 +47,8 @@ class chatUUser_Info {
     _data['isOnline'] = isOnline;
     return _data;
   }
+
+  // static String getPushToken() {
+  //   return pushToken;
+  // }
 }
