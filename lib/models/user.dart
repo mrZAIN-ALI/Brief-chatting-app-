@@ -17,7 +17,7 @@ class chatUUser_Info {
   late  String about;
   late  String createdAt;
   late  String id;
-  late  String pushToken;
+  String pushToken="default";
   late  String email;
   late  bool isOnline;
 

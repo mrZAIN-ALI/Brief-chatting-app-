@@ -22,7 +22,8 @@ class Apis {
   //
   static FirebaseMessaging f_messageing = FirebaseMessaging.instance;
   //
-  static Future<void> getFCM_Token() async {
+  static Future<void> 
+  getFCM_Token() async {
     await f_messageing.requestPermission();
     f_messageing.getToken().then((value) {
       if (value != null) me_LoggedIn.pushToken = value;
@@ -228,12 +229,13 @@ class Apis {
   static Future<void> sendPushNotification(
       chatUUser_Info secondPlayer, String msg) async {
     try {
+      print("I am printing push token of second player : ${secondPlayer.pushToken}");
       final body = {
         "to": secondPlayer.pushToken,
         "notification": {"title": secondPlayer.name, "body": msg},
       };
       var resoponse = await post(
-        Uri.parse("https//fcm.googleapis.com/fcm/send"),
+        Uri.parse("https://fcm.googleapis.com/fcm/send"),
         headers: {
           HttpHeaders.contentTypeHeader: "application/json",
           HttpHeaders.authorizationHeader:
@@ -244,7 +246,7 @@ class Apis {
       print("Resoponse staus : ${resoponse.statusCode}");
       print("Resoponse body : ${resoponse.body}");
     } catch (e) {
-      print("sendPushNotification:Error while sending push notification : $e");
+      print("[[[[sendPushNotification]]]]    :Error while sending push notification : $e");
     }
   }
 }
