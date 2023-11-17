@@ -36,15 +36,14 @@ class _homeScreenState extends State<homeScreen> {
     }
   }
 
-  void initState() {
+  void initState()  {
     super.initState();
     print(("Calling getLoggedInUserInfo"));
-    // Apis.getLoggedInUserInfo().then((_) {
-    //   print("Calling getFCM_Token");
-    //   Apis.getFCM_Token();
-    // },);
-    Apis.getLoggedInUserInfo();
-    Apis.updateActiveStatus(true);
+    Apis.getLoggedInUserInfo().then((_) {
+      print("Calling getFCM_Token");
+      Apis.getFCM_Token();
+      Apis.updateActiveStatus(true);
+    },);
     SystemChannels.lifecycle.setMessageHandler((message) {
       if (Apis.auth.currentUser != null) {
         if (message.toString().contains("resume")) {
@@ -61,6 +60,8 @@ class _homeScreenState extends State<homeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("inside home screen");
+
     return WillPopScope(
       onWillPop: () {
         if (_is_Searching) {

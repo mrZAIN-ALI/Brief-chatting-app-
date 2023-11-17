@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
         );
         if (FirebaseAuth.instance.currentUser != null) {
           print(
-              "intitstate of splash screen user is : ${Apis.current_User}");
+              "Now going to home scree from splash screen for user  : ${Apis.current_User}");
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -53,6 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("inside splash screen");
     final _media_Q = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(children: [

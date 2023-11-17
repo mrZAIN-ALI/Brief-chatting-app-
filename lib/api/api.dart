@@ -27,7 +27,7 @@ class Apis {
     await f_messageing.requestPermission();
     f_messageing.getToken().then((value) {
       if (value != null) me_LoggedIn.pushToken = value;
-      print("FCM Token : $value");
+      print("FCM Token : ${me_LoggedIn.pushToken}");
       //presentatio prep fpr cn
     });
   }
@@ -222,6 +222,7 @@ class Apis {
     return fireStrore.collection("users").doc(current_User!.uid).update({
       "isOnline": stat,
       "lastActive": DateTime.now().millisecondsSinceEpoch.toString(),
+      "push_token": me_LoggedIn.pushToken ?? "Yr abhi tk ni mila",
     });
   }
 
