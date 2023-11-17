@@ -49,7 +49,7 @@ class Apis {
       about: "bhag jao",
       createdAt: time,
       id: current_User!.uid ?? "id",
-      pushToken: "unkniwn right now",
+      pushToken: "same As",
       email: current_User!.email.toString(),
       isOnline: true,
     );
@@ -57,7 +57,7 @@ class Apis {
     return await fireStrore.collection("users").doc(current_User!.uid).set(
           chatUser.getJsonFormat(),
         );
-  }
+  } 
 
   //
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAlusers() {

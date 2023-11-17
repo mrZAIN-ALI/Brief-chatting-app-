@@ -37,10 +37,13 @@ class _homeScreenState extends State<homeScreen> {
   }
 
   void initState() {
-    //sdf
     super.initState();
     print(("Calling getLoggedInUserInfo"));
-    Apis.getLoggedInUserInfo().then((value) => Apis.getFCM_Token());
+    // Apis.getLoggedInUserInfo().then((_) {
+    //   print("Calling getFCM_Token");
+    //   Apis.getFCM_Token();
+    // },);
+    Apis.getLoggedInUserInfo();
     Apis.updateActiveStatus(true);
     SystemChannels.lifecycle.setMessageHandler((message) {
       if (Apis.auth.currentUser != null) {
@@ -144,7 +147,7 @@ class _homeScreenState extends State<homeScreen> {
               );
             } else {
               return Center(
-                child: Text("Network not available"),
+                child: Text(":( Snap Something went wrong"),
               );
             }
           },
