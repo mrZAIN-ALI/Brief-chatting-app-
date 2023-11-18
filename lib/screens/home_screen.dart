@@ -25,6 +25,7 @@ class _homeScreenState extends State<homeScreen> {
   List<chatUUser_Info> _list_UserInfo = [];
 
   void searchUserFromMainList(value) {
+    //this function will search the user from the main list
     _searchList.clear();
     for (var i in _list_UserInfo) {
       if (i.name.toLowerCase().contains(value.toLowerCase()) ||
