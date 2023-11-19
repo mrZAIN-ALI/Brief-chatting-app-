@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 
 class Apis {
@@ -22,13 +23,14 @@ class Apis {
   //
   static FirebaseMessaging f_messageing = FirebaseMessaging.instance;
   //
-  static Future<void> 
-  getFCM_Token() async {
+  static Future<void> getFCM_Token() async {
     await f_messageing.requestPermission();
-    f_messageing.getToken().then((value) {
-      if (value != null) me_LoggedIn.pushToken = value;
-      print("FCM Token : ${me_LoggedIn.pushToken}");
-      //presentatio prep fpr cn
+     f_messageing.getToken().then((value) {
+      if (value != null) {
+        UpdateFCMTOken(value);
+        me_LoggedIn.pushToken = value;
+        print("FCM Token : ${me_LoggedIn.pushToken}");
+      }
     });
   }
 
@@ -57,7 +59,7 @@ class Apis {
     return await fireStrore.collection("users").doc(current_User!.uid).set(
           chatUser.getJsonFormat(),
         );
-  } 
+  }
 
   //
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAlusers() {
@@ -219,10 +221,23 @@ class Apis {
 
   //update active status of user
   static Future<void> updateActiveStatus(bool stat) {
+    // print("Form updateActiveStatus : Updating pushtoken : ${me_LoggedIn.pushToken}");
+    //
     return fireStrore.collection("users").doc(current_User!.uid).update({
       "isOnline": stat,
-      "lastActive": DateTime.now().millisecondsSinceEpoch.toString(),
-      "push_token": me_LoggedIn.pushToken ?? "Yr abhi tk ni mila",
+      "lastActive": DateTime.now().millisecondsSinceEpoch.toString()
+    });
+  }
+
+  //update Fcm toekn of user
+  static Future<void> UpdateFCMTOken(String token) {
+    print(
+        "Form UpdateFCMTOken : Updating pushtoken : ${token}");
+    //
+    return fireStrore.collection("users").doc(current_User!.uid).update({
+      // "isOnline": stat,
+      // "lastActive": DateTime.now().millisecondsSinceEpoch.toString(),
+      "push_token": token ?? "Yr abhi tk ni mila",
     });
   }
 
@@ -230,7 +245,8 @@ class Apis {
   static Future<void> sendPushNotification(
       chatUUser_Info secondPlayer, String msg) async {
     try {
-      print("I am printing push token of second player : ${secondPlayer.pushToken}");
+      print(
+          "I am printing push token of second player : ${secondPlayer.pushToken}");
       final body = {
         "to": secondPlayer.pushToken,
         "notification": {"title": secondPlayer.name, "body": msg},
@@ -247,7 +263,8 @@ class Apis {
       print("Resoponse staus : ${resoponse.statusCode}");
       print("Resoponse body : ${resoponse.body}");
     } catch (e) {
-      print("[[[[sendPushNotification]]]]    :Error while sending push notification : $e");
+      print(
+          "[[[[sendPushNotification]]]]    :Error while sending push notification : $e");
     }
   }
 }
