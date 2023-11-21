@@ -3,6 +3,9 @@ import 'package:chit_chat/screens/splash_Screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_notification_channel/flutter_notification_channel.dart';
+import 'package:flutter_notification_channel/notification_importance.dart';
+import 'package:flutter_notification_channel/notification_visibility.dart';
 //
 import './screens/home_screen.dart';
 import './screens/auth_Screens/login_Screen.dart';
@@ -14,6 +17,7 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  _inializeFirebase();
   runApp(const MyApp());
 }
 
@@ -76,4 +80,14 @@ class MyApp extends StatelessWidget {
       home: SplashScreen(),
     );
   }
+}
+_inializeFirebase() async{
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  var result = await FlutterNotificationChannel.registerNotificationChannel(
+    description: 'Display Chats notifications',
+    id: 'chatNotifications',
+    importance: NotificationImportance.IMPORTANCE_HIGH,
+    name: 'Chat',
+);
+print(result);
 }

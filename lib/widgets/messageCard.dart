@@ -170,11 +170,60 @@ class _MessageCardState extends State<MessageCard> {
       ],
     );
   }
+  //
+  void _showBottomSheet() {
+    final media_Q = MediaQuery.of(context).size;
+    showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(15),
+        topRight: Radius.circular(15),
+      )),
+      showDragHandle: true,
+      context: context,
+      builder: (context) {
+        return ListView(
+          shrinkWrap: true,
+          children: [
+            Text("Hello")
+          ],
+        );
+      },
+    );
+  }
+  //
+  @override
+  Widget build(BuildContext context) {
+    final isMe=Apis.me_LoggedIn.id == widget.message.fromId;
+    return InkWell(
+      onLongPress: () {
+        _showBottomSheet();
+      },
+      child: isMe ? _myMessage() : _secondPlayer(),
+    );
+  }
+}
+
+class _OptionItem extends StatelessWidget {
+  // const _OptionItem({super.key});
+  final name;
+  final icon;
+  final Function onTapCallback;
+  const _OptionItem({ required this.name,required this.icon,required this.onTapCallback});
 
   @override
   Widget build(BuildContext context) {
-    return Apis.me_LoggedIn.id == widget.message.fromId
-        ? _myMessage()
-        : _secondPlayer();
+    return InkWell(
+      onTap: () {
+        onTapCallback();
+      },
+      child: Row(
+        children: [
+          icon,
+          Flexible(child: Text("        ,n$name"),),
+          Text(name),
+        ],
+      ),
+    );
   }
 }

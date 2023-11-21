@@ -25,13 +25,23 @@ class Apis {
   //
   static Future<void> getFCM_Token() async {
     await f_messageing.requestPermission();
-     f_messageing.getToken().then((value) {
-      if (value != null) {
-        UpdateFCMTOken(value);
-        me_LoggedIn.pushToken = value;
-        print("FCM Token : ${me_LoggedIn.pushToken}");
-      }
-    });
+    f_messageing.getToken().then(
+      (value) {
+        if (value != null) {
+          UpdateFCMTOken(value);
+          me_LoggedIn.pushToken = value;
+          print("FCM Token : ${me_LoggedIn.pushToken}");
+        }
+      },
+    );
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   print('Got a message whilst in the foreground!');
+    //   print('Message data: ${message.data}');
+
+    //   if (message.notification != null) {
+    //     print('Message also contained a notification: ${message.notification}');
+    //   }
+    // });
   }
 
   //
@@ -231,13 +241,12 @@ class Apis {
 
   //update Fcm toekn of user
   static Future<void> UpdateFCMTOken(String token) {
-    print(
-        "Form UpdateFCMTOken : Updating pushtoken : ${token}");
+    print("Form UpdateFCMTOken : Updating pushtoken : ${token}");
     //
     return fireStrore.collection("users").doc(current_User!.uid).update({
       // "isOnline": stat,
       // "lastActive": DateTime.now().millisecondsSinceEpoch.toString(),
-      "push_token": token ?? "Yr abhi tk ni mila",
+      "push_token": token,
     });
   }
 
@@ -249,7 +258,12 @@ class Apis {
           "I am printing push token of second player : ${secondPlayer.pushToken}");
       final body = {
         "to": secondPlayer.pushToken,
-        "notification": {"title": secondPlayer.name, "body": msg},
+        "notification": {
+          "title": secondPlayer.name,
+          "body": msg,
+          "android_channel_id": "chatNotifications",
+        },
+        "data": {"someData": "userId : ${me_LoggedIn.id}"}
       };
       var resoponse = await post(
         Uri.parse("https://fcm.googleapis.com/fcm/send"),
