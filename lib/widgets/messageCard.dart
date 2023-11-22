@@ -15,6 +15,8 @@ class MessageCard extends StatefulWidget {
 }
 
 class _MessageCardState extends State<MessageCard> {
+  //
+  //
   Widget _myMessage() {
     if (widget.message.fromId == widget.message.toId) {
       Apis.updateMessageStatus(widget.message);
@@ -185,7 +187,11 @@ class _MessageCardState extends State<MessageCard> {
         return ListView(
           shrinkWrap: true,
           children: [
-            Text("Hello")
+            _OptionItem(name: "Copy", icon: Icons.copy_all_rounded, onTapCallback: (){}),
+            _OptionItem(name: "Edit Message", icon: Icons.copy_all_rounded, onTapCallback: (){}),
+            _OptionItem(name: "Delete Message", icon: Icons.copy_all_rounded, onTapCallback: (){}),
+            _OptionItem(name: "Sent At", icon: Icons.copy_all_rounded, onTapCallback: (){}),
+            _OptionItem(name: "Read At", icon: Icons.copy_all_rounded, onTapCallback: (){}),
           ],
         );
       },
@@ -194,6 +200,7 @@ class _MessageCardState extends State<MessageCard> {
   //
   @override
   Widget build(BuildContext context) {
+
     final isMe=Apis.me_LoggedIn.id == widget.message.fromId;
     return InkWell(
       onLongPress: () {
@@ -213,16 +220,25 @@ class _OptionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      //
+  final mediaQ=MediaQuery.of(context).size;
+  //
     return InkWell(
       onTap: () {
         onTapCallback();
       },
-      child: Row(
-        children: [
-          icon,
-          Flexible(child: Text("        ,n$name"),),
-          Text(name),
-        ],
+      child: Padding(
+        padding:  EdgeInsets.only(
+          left: mediaQ.width*0.05,
+          top: mediaQ.height*0.015,
+          bottom: mediaQ.height*0.015,
+        ),
+        child: Row(
+          children: [
+            Icon(icon),
+            Flexible(child: Text("  $name"),),
+          ],
+        ),
       ),
     );
   }
