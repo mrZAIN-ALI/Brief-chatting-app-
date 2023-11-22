@@ -188,8 +188,10 @@ class _MessageCardState extends State<MessageCard> {
           shrinkWrap: true,
           children: [
             _OptionItem(name: "Copy", icon: Icons.copy_all_rounded, onTapCallback: (){}),
+            Divider(color: Colors.black,),
             _OptionItem(name: "Edit Message", icon: Icons.copy_all_rounded, onTapCallback: (){}),
             _OptionItem(name: "Delete Message", icon: Icons.copy_all_rounded, onTapCallback: (){}),
+            Divider(color: Colors.black,),
             _OptionItem(name: "Sent At", icon: Icons.copy_all_rounded, onTapCallback: (){}),
             _OptionItem(name: "Read At", icon: Icons.copy_all_rounded, onTapCallback: (){}),
           ],
@@ -223,21 +225,28 @@ class _OptionItem extends StatelessWidget {
       //
   final mediaQ=MediaQuery.of(context).size;
   //
-    return InkWell(
-      onTap: () {
-        onTapCallback();
-      },
-      child: Padding(
-        padding:  EdgeInsets.only(
-          left: mediaQ.width*0.05,
-          top: mediaQ.height*0.015,
-          bottom: mediaQ.height*0.015,
-        ),
-        child: Row(
-          children: [
-            Icon(icon),
-            Flexible(child: Text("  $name"),),
-          ],
+    return Card(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(15),
+        topRight: Radius.circular(15),
+      )),
+      child: InkWell(
+        onTap: () {
+          onTapCallback();
+        },
+        child: Padding(
+          padding:  EdgeInsets.only(
+            left: mediaQ.width*0.05,
+            top: mediaQ.height*0.015,
+            bottom: mediaQ.height*0.015,
+          ),
+          child: Row(
+            children: [
+              Icon(icon),
+              Flexible(child: Text("  $name"),),
+            ],
+          ),
         ),
       ),
     );
