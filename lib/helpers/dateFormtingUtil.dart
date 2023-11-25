@@ -77,4 +77,29 @@ class DateFormatUtil {
     String month = getMonth(intTime);
     return "Last Seen on ${time.day} ${getMonth(time.month)} $formatedTime";
   }
+  //format message sent time
+  static String formatMessageSeenTime(
+      {required BuildContext context, required String messageSentTime}) {
+    final int intTime = int.tryParse(messageSentTime) ?? -1;
+
+    if (intTime == -1) {
+      return "Time Not Available";
+    }
+    final time = DateTime.fromMillisecondsSinceEpoch(intTime);
+    final currentTime = DateTime.now();
+    final difference = currentTime.difference(time).inHours;
+
+    String formatedTime = TimeOfDay.fromDateTime(time).format(context);
+    if (time.day == currentTime.day &&
+        time.month == currentTime.month &&
+        time.year == currentTime.year) {
+          return "Today at $formatedTime";
+        }
+
+    if((difference/24).round()==1){
+      return "Yesterday at $formatedTime";
+    }
+    String month = getMonth(intTime);
+    return "${time.day} ${getMonth(time.month)} $formatedTime";
+  }
 }

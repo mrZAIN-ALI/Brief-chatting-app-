@@ -172,10 +172,12 @@ class _MessageCardState extends State<MessageCard> {
       ],
     );
   }
+
   //
-  void _showBottomSheet() {
+  void _showBottomSheet(bool isME) {
     final media_Q = MediaQuery.of(context).size;
     showModalBottomSheet(
+      backgroundColor: Theme.of(context).colorScheme.secondary,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
         topLeft: Radius.circular(15),
@@ -187,26 +189,62 @@ class _MessageCardState extends State<MessageCard> {
         return ListView(
           shrinkWrap: true,
           children: [
-            _OptionItem(name: "Copy", icon: Icons.copy_all_rounded, onTapCallback: (){}),
-            Divider(color: Colors.black,),
-            _OptionItem(name: "Edit Message", icon: Icons.copy_all_rounded, onTapCallback: (){}),
-            _OptionItem(name: "Delete Message", icon: Icons.copy_all_rounded, onTapCallback: (){}),
-            Divider(color: Colors.black,),
-            _OptionItem(name: "Sent At", icon: Icons.copy_all_rounded, onTapCallback: (){}),
-            _OptionItem(name: "Read At", icon: Icons.copy_all_rounded, onTapCallback: (){}),
+            //
+            widget.message.typeOfMsg == m.msgType.text
+                ? _OptionItem(
+                    name: "Copy",
+                    icon: Icons.copy_all_rounded,
+                    onTapCallback: () {})
+                : _OptionItem(
+                    name: "Save Image",
+                    icon: Icons.download_rounded,
+                    onTapCallback: () {}),
+            //
+            Divider(
+                color: Colors.grey,
+                height: media_Q.height * 0.03,
+                thickness: 2),
+            if (widget.message.typeOfMsg == m.msgType.text && isME)
+              _OptionItem(
+                  name: "Edit Message", icon: Icons.edit, onTapCallback: () {}),
+            if (isME)
+              _OptionItem(
+                  name: "Delete Message",
+                  icon: Icons.delete_forever,
+                  onTapCallback: () {}),
+            if (isME)
+              Divider(
+                  color: Colors.grey,
+                  height: media_Q.height * 0.03,
+                  thickness: 2),
+            _OptionItem(
+                name: "Sent At ${DateFormatUtil.formatMessageSeenTime(
+                  context: context,
+                  messageSentTime: widget.message.sentTime,
+                )}",
+                icon: Icons.remove_red_eye_outlined,
+                onTapCallback: () {}),
+            _OptionItem(
+                name: widget.message.readTime == " "? "Not Seen Yet"
+                :"Read At ${DateFormatUtil.formatMessageSeenTime(
+                  context: context,
+                  messageSentTime: widget.message.readTime,
+                )}",
+                icon: Icons.remove_red_eye,
+                onTapCallback: () {}),
           ],
         );
       },
     );
   }
+
   //
   @override
   Widget build(BuildContext context) {
-
-    final isMe=Apis.me_LoggedIn.id == widget.message.fromId;
+    final isMe = Apis.me_LoggedIn.id == widget.message.fromId;
     return InkWell(
       onLongPress: () {
-        _showBottomSheet();
+        _showBottomSheet(isMe);
       },
       child: isMe ? _myMessage() : _secondPlayer(),
     );
@@ -218,34 +256,44 @@ class _OptionItem extends StatelessWidget {
   final name;
   final icon;
   final Function onTapCallback;
-  const _OptionItem({ required this.name,required this.icon,required this.onTapCallback});
+  const _OptionItem(
+      {required this.name, required this.icon, required this.onTapCallback});
 
   @override
   Widget build(BuildContext context) {
-      //
-  final mediaQ=MediaQuery.of(context).size;
-  //
-    return Card(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(15),
-        topRight: Radius.circular(15),
-      )),
-      child: InkWell(
-        onTap: () {
-          onTapCallback();
-        },
-        child: Padding(
-          padding:  EdgeInsets.only(
-            left: mediaQ.width*0.05,
-            top: mediaQ.height*0.015,
-            bottom: mediaQ.height*0.015,
-          ),
-          child: Row(
-            children: [
-              Icon(icon),
-              Flexible(child: Text("  $name"),),
-            ],
+    //
+    final mediaQ = MediaQuery.of(context).size;
+    //
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+      child: Card(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15),
+          topRight: Radius.circular(15),
+        )),
+        child: InkWell(
+          onTap: () {
+            onTapCallback();
+          },
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: mediaQ.width * 0.05,
+              top: mediaQ.height * 0.015,
+              bottom: mediaQ.height * 0.015,
+            ),
+            child: Row(
+              children: [
+                Icon(icon),
+                Flexible(
+                  child: Text(
+                    
+                    "  $name",
+                    style: TextStyle(color: Colors.black54,fontSize: 22),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
