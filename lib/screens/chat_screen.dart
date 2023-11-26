@@ -29,6 +29,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   //
   bool _isEmojiPickerOn = false;
+  bool _isUploading = false;
   List<Messages> _listofMessages = [];
   final TextEditingController _mesgFieldController = TextEditingController();
   //
@@ -177,7 +178,23 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+
+                      // Picking multiple images
+                      final List<XFile> images =
+                          await picker.pickMultiImage(imageQuality: 70);
+
+                      // uploading & sending image one by one
+                      for (var i in images) {
+                        setState(() => _isUploading = true);
+                        await Apis.sendPhoto_msg(
+                          File(i.path),
+                          widget.secondPlayer,
+                        );
+                        setState(() => _isUploading = false);
+                      }
+                    },
                     icon: Icon(Icons.photo),
                   ),
                   IconButton(
@@ -383,6 +400,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 body: Column(
                   children: [
                     renderChatBody(),
+                    if(_isUploading)
+                      Center(child: CircularProgressIndicator()),
                     renderUserInput(),
                     if (_isEmojiPickerOn) _showEmojiPicker(),
                   ],

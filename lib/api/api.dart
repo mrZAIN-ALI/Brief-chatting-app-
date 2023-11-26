@@ -281,4 +281,27 @@ class Apis {
           "[[[[sendPushNotification]]]]    :Error while sending push notification : $e");
     }
   }
+
+  //Delete Message from Firebase
+  static Future<void> deleteMessage(Messages msg) async {
+    final ref =
+        fireStrore.collection("chats/${getUniqueChatID(msg.toId)}/messages/");
+    await ref.doc(msg.sentTime).delete();
+
+    if (msg.typeOfMsg == msgType.image) {
+      storage_FirebaseSrg.refFromURL(msg.msg).delete();
+    }
+  }
+
+  //Update Message from Firebase
+  static Future<void> UpdateMessage(
+      Messages msg, String updated_Message) async {
+    final ref =
+        fireStrore.collection("chats/${getUniqueChatID(msg.toId)}/messages/");
+    await ref.doc(msg.sentTime).update(
+      {
+        "msg": updated_Message,
+      },
+    );
+  }
 }

@@ -1,3 +1,5 @@
+import 'package:chit_chat/api/api.dart';
+import 'package:chit_chat/models/message.dart';
 import 'package:flutter/material.dart';
 
 class DialogHelper {
@@ -29,12 +31,62 @@ class DialogHelper {
       ),
     );
   }
+
   static void showProgressIndicator(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
         return Center(
           child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  static void showEditMessagDialog(BuildContext context,Messages currentMsg) {
+    String UpdatedMessage = currentMsg.msg;
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              Icon(Icons.edit),
+              SizedBox(
+                width: 10,
+              ),
+              Text("Edit Message"),
+            ],
+          ),
+          content: TextFormField(
+            initialValue: UpdatedMessage,
+            onChanged: (value) {
+              UpdatedMessage=value;
+            },
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Apis.UpdateMessage(currentMsg, UpdatedMessage);
+                Navigator.pop(context);
+              },
+              child: Text("Save"),
+            ),
+          ],
         );
       },
     );

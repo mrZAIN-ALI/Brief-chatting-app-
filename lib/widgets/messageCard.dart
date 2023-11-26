@@ -1,10 +1,17 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chit_chat/api/api.dart';
 import 'package:chit_chat/helpers/dateFormtingUtil.dart';
+import 'package:chit_chat/helpers/dialogs.dart';
 import 'package:chit_chat/models/message.dart' as m;
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+// import 'package:dio';
 
 class MessageCard extends StatefulWidget {
   final m.Messages message;
@@ -194,11 +201,46 @@ class _MessageCardState extends State<MessageCard> {
                 ? _OptionItem(
                     name: "Copy",
                     icon: Icons.copy_all_rounded,
-                    onTapCallback: () {})
+                    onTapCallback: () async {
+                      await Clipboard.setData(
+                              ClipboardData(text: widget.message.msg))
+                          .then((value) {
+                        Navigator.pop(context);
+                        //
+                        DialogHelper.showSnackBar_Normal(
+                            context, "Copied To Clipboard");
+                      });
+                    })
                 : _OptionItem(
                     name: "Save Image",
                     icon: Icons.download_rounded,
-                    onTapCallback: () {}),
+                    onTapCallback: () async {
+                      try {
+                        var response = await Dio().get(
+                          widget.message.msg,
+                          options: Options(
+                            responseType: ResponseType.bytes,
+                          ),
+                        );
+                        final result = await ImageGallerySaver.saveImage(
+                            Uint8List.fromList(
+                              response.data,
+                            ),
+                            quality: 100);
+                        print(result);
+                        if (result != null) {
+                          Navigator.pop(context);
+                          DialogHelper.showSnackBar_Normal(
+                              context, "Image Saved");
+                        } else {
+                          DialogHelper.showSnackBar_error(
+                              context, "Error while saving image");
+                        }
+                      } catch (e) {
+                        print("Error while saving image : $e");
+                      }
+                    },
+                  ),
             //
             Divider(
                 color: Colors.grey,
@@ -206,12 +248,23 @@ class _MessageCardState extends State<MessageCard> {
                 thickness: 2),
             if (widget.message.typeOfMsg == m.msgType.text && isME)
               _OptionItem(
-                  name: "Edit Message", icon: Icons.edit, onTapCallback: () {}),
+                  name: "Edit Message",
+                  icon: Icons.edit,
+                  onTapCallback: () {
+                    Navigator.of(context).pop();
+                    DialogHelper.showEditMessagDialog(context, widget.message);
+                  }),
             if (isME)
               _OptionItem(
                   name: "Delete Message",
                   icon: Icons.delete_forever,
-                  onTapCallback: () {}),
+                  onTapCallback: () async {
+                    await Apis.deleteMessage(widget.message).then((value) {
+                      Navigator.pop(context);
+                      DialogHelper.showSnackBar_Normal(
+                          context, "Message Deleted");
+                    });
+                  }),
             if (isME)
               Divider(
                   color: Colors.grey,
@@ -225,11 +278,12 @@ class _MessageCardState extends State<MessageCard> {
                 icon: Icons.remove_red_eye_outlined,
                 onTapCallback: () {}),
             _OptionItem(
-                name: widget.message.readTime == " "? "Not Seen Yet"
-                :"Read At ${DateFormatUtil.formatMessageSeenTime(
-                  context: context,
-                  messageSentTime: widget.message.readTime,
-                )}",
+                name: widget.message.readTime == " "
+                    ? "Not Seen Yet"
+                    : "Read At ${DateFormatUtil.formatMessageSeenTime(
+                        context: context,
+                        messageSentTime: widget.message.readTime,
+                      )}",
                 icon: Icons.remove_red_eye,
                 onTapCallback: () {}),
           ],
@@ -287,9 +341,8 @@ class _OptionItem extends StatelessWidget {
                 Icon(icon),
                 Flexible(
                   child: Text(
-                    
                     "  $name",
-                    style: TextStyle(color: Colors.black54,fontSize: 22),
+                    style: TextStyle(color: Colors.black54, fontSize: 22),
                   ),
                 ),
               ],
