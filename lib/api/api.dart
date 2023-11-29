@@ -72,8 +72,9 @@ class Apis {
   }
 
   //
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAlusers() {
-    return Apis.fireStrore.collection("users").snapshots();
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAlusers(List<String> ids) {
+    print("Printing firends id fronm getAlusers $ids");
+    return Apis.fireStrore.collection("users").where("id",whereIn: ids).snapshots();
   }
 
   //
@@ -303,5 +304,37 @@ class Apis {
         "msg": updated_Message,
       },
     );
+  }
+
+  //add new user to friend list
+  static Future<bool> addNewFriend(String email) async {
+    try {
+     final data= await fireStrore
+          .collection("users")
+          .where("email",isEqualTo: email).get();
+      if(data.docs.isNotEmpty && data.docs.first != me_LoggedIn.id){
+        fireStrore.collection("users")
+        .doc(me_LoggedIn.id)
+        .collection("myFriends")
+        .doc(data.docs.first.id).set({});
+      return true;
+      }
+      else{
+      print("Error while adding new friend : ");
+
+        return false;
+      }
+    } catch (e) {
+      print("Error while adding new friend : $e");
+      return false;
+    }
+  }
+  
+  //get all friends of currentLoggedIn User
+    static Stream<QuerySnapshot<Map<String, dynamic>>> getFriendsOfCurrentUser() {
+    return fireStrore.collection("users")
+    .doc(me_LoggedIn.id)
+    .collection("myFriends")
+    .snapshots();
   }
 }

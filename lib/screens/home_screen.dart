@@ -1,4 +1,5 @@
 import 'package:chit_chat/api/api.dart';
+import 'package:chit_chat/helpers/dialogs.dart';
 import 'package:chit_chat/models/user.dart';
 import 'package:chit_chat/screens/profile_Screen.dart';
 import 'package:chit_chat/widgets/chat_user_card.dart';
@@ -114,7 +115,9 @@ class _homeScreenState extends State<homeScreen> {
           ],
         ),
         //
-        body: StreamBuilder(
+        body: StreamBuilder(stream: , builder: (context, snapshot) {
+          if(snapshot.hasData){
+             StreamBuilder(
           stream: Apis.getAlusers(),
           builder: (context, snapshot) {
             final dataFromSnap = snapshot.data?.docs;
@@ -153,13 +156,17 @@ class _homeScreenState extends State<homeScreen> {
               );
             }
           },
-        ),
+        );
+          }else{
+            return Center(child: CircularProgressIndicator(),);
+          }
+        },),
         //
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 15, right: 15),
           child: FloatingActionButton(
             onPressed: () {
-              Apis.auth.signOut();
+              DialogHelper.showAddNewFriendDialog(context);
             },
             child: Icon(Icons.add_comment),
             backgroundColor: Theme.of(context).colorScheme.primary,
