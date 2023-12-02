@@ -117,7 +117,7 @@ class _homeScreenState extends State<homeScreen> {
         //
         body: StreamBuilder(stream: , builder: (context, snapshot) {
           if(snapshot.hasData){
-             StreamBuilder(dsadsad
+             StreamBuilder(dsadsaddasdasdasdsadsa
           stream: Apis.getAlusers(),
           builder: (context, snapshot) {
             final dataFromSnap = snapshot.data?.docs;
