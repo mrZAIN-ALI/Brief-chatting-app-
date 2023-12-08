@@ -46,8 +46,10 @@ class Apis {
 
   //
   static Future<bool> userExists() async {
-    return (await fireStrore.collection("users").doc(current_User!.uid).get())
+    final weatherUexists=(await fireStrore.collection("users").doc(current_User!.uid).get())
         .exists;
+    print("From userExists function returngng this value : $weatherUexists");
+    return weatherUexists;
   }
 
   //
@@ -69,12 +71,6 @@ class Apis {
     return await fireStrore.collection("users").doc(current_User!.uid).set(
           chatUser.getJsonFormat(),
         );
-  }
-
-  //
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAlusers(List<String> ids) {
-    print("Printing firends id fronm getAlusers $ids");
-    return Apis.fireStrore.collection("users").where("id",whereIn: ids).snapshots();
   }
 
   //
@@ -309,18 +305,20 @@ class Apis {
   //add new user to friend list
   static Future<bool> addNewFriend(String email) async {
     try {
-     final data= await fireStrore
+      final data = await fireStrore
           .collection("users")
-          .where("email",isEqualTo: email).get();
-      if(data.docs.isNotEmpty && data.docs.first != me_LoggedIn.id){
-        fireStrore.collection("users")
-        .doc(me_LoggedIn.id)
-        .collection("myFriends")
-        .doc(data.docs.first.id).set({});
-      return true;
-      }
-      else{
-      print("Error while adding new friend : ");
+          .where("email", isEqualTo: email)
+          .get();
+      if (data.docs.isNotEmpty && data.docs.first != me_LoggedIn.id) {
+        fireStrore
+            .collection("users")
+            .doc(me_LoggedIn.id)
+            .collection("myFriends")
+            .doc(data.docs.first.id)
+            .set({});
+        return true;
+      } else {
+        print("Error while adding new friend : ");
 
         return false;
       }
@@ -329,12 +327,24 @@ class Apis {
       return false;
     }
   }
-  
+
   //get all friends of currentLoggedIn User
-    static Stream<QuerySnapshot<Map<String, dynamic>>> getFriendsOfCurrentUser() {
-    return fireStrore.collection("users")
-    .doc(me_LoggedIn.id)
-    .collection("myFriends")
-    .snapshots();
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getFriendsOfCurrentUser() {
+    return fireStrore
+        .collection("users")
+        .doc(me_LoggedIn.id)
+        .collection("myFriends")
+        .snapshots();
   }
+
+  //get All Users
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAlusers(
+      List<String> ids) {
+    print("Printing firends id fronm getAlusers $ids");
+    return Apis.fireStrore
+        .collection("users")
+        .where("id", whereIn: ids)
+        .snapshots();
+  }
+  //get
 }

@@ -38,14 +38,16 @@ class _homeScreenState extends State<homeScreen> {
     }
   }
 
-  void initState()  {
+  void initState() {
     super.initState();
     print(("Calling getLoggedInUserInfo"));
-    Apis.getLoggedInUserInfo().then((_) {
-      print("Calling getFCM_Token");
-      Apis.getFCM_Token();
-      Apis.updateActiveStatus(true);
-    },);
+    Apis.getLoggedInUserInfo().then(
+      (_) {
+        print("Calling getFCM_Token");
+        Apis.getFCM_Token();
+        Apis.updateActiveStatus(true);
+      },
+    );
     SystemChannels.lifecycle.setMessageHandler((message) {
       if (Apis.auth.currentUser != null) {
         if (message.toString().contains("resume")) {
@@ -115,52 +117,60 @@ class _homeScreenState extends State<homeScreen> {
           ],
         ),
         //
-        body: StreamBuilder(stream: , builder: (context, snapshot) {
-          if(snapshot.hasData){
-             StreamBuilder(dsadsaddasdasdasdsadsa
-          stream: Apis.getAlusers(),
+        body: StreamBuilder(
+          stream: Apis.getFriendsOfCurrentUser(),
           builder: (context, snapshot) {
-            final dataFromSnap = snapshot.data?.docs;
-            switch (snapshot.connectionState) {
-              case ConnectionState.waiting:
-              case ConnectionState.none:
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              case ConnectionState.active:
-              case ConnectionState.done:
-                _list_UserInfo = dataFromSnap!
-                        .map((e) =>
-                            chatUUser_Info.mapJsonToModelObject(e.data()))
-                        .toList() ??
-                    [];
-            }
             if (snapshot.hasData) {
-              final data = snapshot.data!.docs;
-              // print("Date from firestore : ${jsonEncode(data[0].data())}");
-            }
-            if (_list_UserInfo.isNotEmpty) {
-              return ListView.builder(
-                itemCount:
-                    _is_Searching ? _searchList.length : _list_UserInfo.length,
-                physics: BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return chatUserCard(_is_Searching
-                      ? _searchList[index]
-                      : _list_UserInfo[index]);
+              return StreamBuilder(
+                stream: Apis.getAlusers(
+                  snapshot.data!.docs.map((e) => e.id).toList(),
+                ),
+                builder: (context, snapshot) {
+                  final dataFromSnap = snapshot.data?.docs;
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                    case ConnectionState.none:
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    case ConnectionState.active:
+                    case ConnectionState.done:
+                      _list_UserInfo = dataFromSnap!
+                              .map((e) =>
+                                  chatUUser_Info.mapJsonToModelObject(e.data()))
+                              .toList() ??
+                          [];
+                  }
+                  if (snapshot.hasData) {
+                    final data = snapshot.data!.docs;
+                    // print("Date from firestore : ${jsonEncode(data[0].data())}");
+                  }
+                  if (_list_UserInfo.isNotEmpty) {
+                    return ListView.builder(
+                      itemCount: _is_Searching
+                          ? _searchList.length
+                          : _list_UserInfo.length,
+                      physics: BouncingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return chatUserCard(_is_Searching
+                            ? _searchList[index]
+                            : _list_UserInfo[index]);
+                      },
+                    );
+                  } else {
+                    return Center(
+                      child: Text(":( Snap Something went wrong"),
+                    );
+                  }
                 },
               );
             } else {
               return Center(
-                child: Text(":( Snap Something went wrong"),
+                child: CircularProgressIndicator(),
               );
             }
           },
-        );
-          }else{
-            return Center(child: CircularProgressIndicator(),);
-          }
-        },),
+        ),
         //
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 15, right: 15),
