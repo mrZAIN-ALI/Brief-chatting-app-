@@ -76,13 +76,14 @@ class Apis {
   //
   static Future<void> getLoggedInUserInfo() async {
     // current_User ?? await auth.currentUser;
-    await fireStrore
+    try {
+          await fireStrore
         .collection("users")
         .doc(current_User!.uid)
         .get()
         .then((user) async {
       if (user.exists) {
-        // print("Error ku a rha h ");
+        print("Error ku a rha h ");
         me_LoggedIn = chatUUser_Info.mapJsonToModelObject(user.data()!);
       } else {
         await createUser().then((value) => getLoggedInUserInfo());
@@ -90,6 +91,10 @@ class Apis {
       }
     });
     // print("Data from firestore : ${data.data()}");
+    } catch (e) {
+      print("Error from Functoin named getLoggedInUserInfo : $e");
+    }
+
   }
 
   //

@@ -38,6 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           );
         } else {
+          pragma("Now going to login scree from splash screen");
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
