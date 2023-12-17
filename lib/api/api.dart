@@ -346,6 +346,13 @@ class Apis {
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAlusers(
       List<String> ids) {
     print("Printing firends id fronm getAlusers $ids");
+    if(ids.isEmpty){
+      return Apis.fireStrore
+        .collection("users")
+        .where("id", isEqualTo: "id")
+        .snapshots();
+      
+    }
     return Apis.fireStrore
         .collection("users")
         .where("id", whereIn: ids)

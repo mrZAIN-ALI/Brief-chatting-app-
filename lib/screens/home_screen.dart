@@ -125,7 +125,11 @@ class _homeScreenState extends State<homeScreen> {
                 child: CircularProgressIndicator(),
               );
             }
-            return StreamBuilder( 
+            if (snapshot.connectionState == ConnectionState.done) {
+              Apis.getFCM_Token();
+              Apis.updateActiveStatus(true);
+            }
+            return StreamBuilder(
               stream: Apis.getFriendsOfCurrentUser(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -167,7 +171,7 @@ class _homeScreenState extends State<homeScreen> {
                         );
                       } else {
                         return Center(
-                          child: Text(":( Snap Something went wrong"),
+                          child: Text("Please Add Some Friends"),
                         );
                       }
                     },

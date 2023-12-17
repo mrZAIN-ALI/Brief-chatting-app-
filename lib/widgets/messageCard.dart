@@ -25,7 +25,7 @@ class _MessageCardState extends State<MessageCard> {
   //
   //
   Widget _myMessage() {
-    if (widget.message.fromId == widget.message.toId) {
+    if (widget.message.fromId == widget.message.toId && widget.message.readTime == " ") {
       Apis.updateMessageStatus(widget.message);
     }
     final mediaQ = MediaQuery.of(context).size;
@@ -108,7 +108,7 @@ class _MessageCardState extends State<MessageCard> {
   Widget _secondPlayer() {
     final mediaQ = MediaQuery.of(context).size;
 
-    if (widget.message.readTime != " ") {
+    if (widget.message.readTime == " ") {
       Apis.updateMessageStatus(widget.message);
     }
     return Row(
@@ -167,12 +167,12 @@ class _MessageCardState extends State<MessageCard> {
                 // DateTime.parse(widget.message.sentTime.toString()).toString(),
                 style: TextStyle(fontSize: 12, color: Colors.black54),
               ),
-              if (widget.message.readTime != " ")
-                Icon(
-                  Icons.done_all,
-                  color: Colors.blue,
-                  size: 20,
-                )
+              // if (widget.message.readTime != " ")
+              //   Icon(
+              //     Icons.done_all,
+              //     color: Colors.blue,
+              //     size: 20,
+              //   )
             ],
           ),
         ),
