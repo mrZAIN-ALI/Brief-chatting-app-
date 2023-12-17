@@ -213,8 +213,14 @@ class _ChatScreenState extends State<ChatScreen> {
             onPressed: () {
               // print("object");
               if (_mesgFieldController.text.isNotEmpty) {
+                if (_listofMessages.isEmpty) {
+                  Apis.sendFistMessage(widget.secondPlayer, _mesgFieldController.text, msgType.text);
+                }
+                else{
+
                 Apis.sendMessage(widget.secondPlayer, _mesgFieldController.text,
                     msgType.text);
+                }
                 _mesgFieldController.text = "";
               } else {
                 return null;

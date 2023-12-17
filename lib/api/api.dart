@@ -46,8 +46,9 @@ class Apis {
 
   //
   static Future<bool> userExists() async {
-    final weatherUexists=(await fireStrore.collection("users").doc(current_User!.uid).get())
-        .exists;
+    final weatherUexists =
+        (await fireStrore.collection("users").doc(current_User!.uid).get())
+            .exists;
     print("From userExists function returngng this value : $weatherUexists");
     return weatherUexists;
   }
@@ -77,24 +78,23 @@ class Apis {
   static Future<void> getLoggedInUserInfo() async {
     // current_User ?? await auth.currentUser;
     try {
-          await fireStrore
-        .collection("users")
-        .doc(current_User!.uid)
-        .get()
-        .then((user) async {
-      if (user.exists) {
-        print("Error ku a rha h ");
-        me_LoggedIn = chatUUser_Info.mapJsonToModelObject(user.data()!);
-      } else {
-        await createUser().then((value) => getLoggedInUserInfo());
-        print("creating user user not exist ");
-      }
-    });
-    // print("Data from firestore : ${data.data()}");
+      await fireStrore
+          .collection("users")
+          .doc(current_User!.uid)
+          .get()
+          .then((user) async {
+        if (user.exists) {
+          print("Error ku a rha h ");
+          me_LoggedIn = chatUUser_Info.mapJsonToModelObject(user.data()!);
+        } else {
+          await createUser().then((value) => getLoggedInUserInfo());
+          print("creating user user not exist ");
+        }
+      });
+      // print("Data from firestore : ${data.data()}");
     } catch (e) {
       print("Error from Functoin named getLoggedInUserInfo : $e");
     }
-
   }
 
   //
@@ -351,5 +351,17 @@ class Apis {
         .where("id", whereIn: ids)
         .snapshots();
   }
-  //get
+
+  //Sending first message
+  static Future<void> sendFistMessage(
+      chatUUser_Info secondPlayer, String msg, msgType type) async {
+    await Apis.fireStrore
+        .collection("users")
+        .doc(secondPlayer.id)
+        .collection("myFriends")
+        .doc(me_LoggedIn.id)
+        .set({}).then(
+      (value) => sendMessage(secondPlayer, msg, type),
+    );
+  }
 }
