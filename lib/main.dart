@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 import 'package:flutter_notification_channel/notification_importance.dart';
 import 'package:flutter_notification_channel/notification_visibility.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 //
 import './screens/home_screen.dart';
 import './screens/auth_Screens/login_Screen.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Chit Chat',
       theme: ThemeData(
